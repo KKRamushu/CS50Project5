@@ -1,0 +1,24 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediRec</title>
+    <link href="{% static 'medirec/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+    <!--Floating Nav Bar-->
+    <div class="nav-bar">
+        <div class="logo-div"><a href="{% url 'index'%}"><h2>Madirec</h2></a></div>
+        <div class="nav-links-div">
+            <a href="#services" class="nav-link">services</a>
+            <a href="#about" class="nav-link">about</a>
+            <a href="{% url 'login_form'%}" class="nav-link">sing in</a>
+        </div>
+    </div>
+    {% block body %}
+    {% endblock %}
+
+</body>
+</html>

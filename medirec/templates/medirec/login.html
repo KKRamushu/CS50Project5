@@ -1,0 +1,16 @@
+{%extends "medirec/layout.html"%}
+{% block body %}
+<div class="page-div" id="login">
+    <div class="login-form-container">
+        <form class="login-form" action="" method="post">
+            <p class="user-input-note">please enter a username, email address, ID number that is associated to your account or file!</p>
+            <input class="username-input input" type="text" name="username" id="userId" placeholder="username/email/ID/Passport">
+            <input class="username-submit input" type="submit" value="next">
+            <div class="sign-up-promp">
+                <p class="sign-up-note">If you're a DOCTOR create an account here <a href="" class="sign-up-link"> Sign Up</a></p>
+                
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
