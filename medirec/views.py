@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .forms import SignUpForm
 
 
 # Create your views here.
@@ -11,4 +12,5 @@ def loginForm(request):
     
 def register(request):
     #open registration form
-    return render(request,"medirec/register.html")
+    form = SignUpForm()
+    return render(request,"medirec/register.html", {'form':form})
