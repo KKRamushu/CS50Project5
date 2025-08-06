@@ -4,25 +4,9 @@
     <div class="login-form-container form-container">
         <form class="register-form" action="" method="post">
             {{form.as_table}}
-        <!--    <p class="user-input-note">Fill in the form to create an account</p>
-            <input class="input" type="text" name="1st-name" id="" placeholder="first name">
-            <input class="input" type="text" name="2nd-name" id="" placeholder="2nd name">
-            <input class="input" type="text" name="surname" id="" placeholder="surname">
-            <select class="input" name="proffession" id="">
-                <option value="">select profession</option>
-                <option value="General Practisioner" class="proffesion-opt">General Practisioner</option>
-                <option value="Dentist" class="proffesion-opt">Dentist</option>
-                <option value="Optometrist" class="proffesion-opt">Optometrist</option>
-                <option value="Pediatrician" class="proffesion-opt">Pediatrician</option>
-                <option value="other" class="proffession-opt">Other</option>
-            </select>
-            <input class="username-input input" type="text" name="username" id="userId" placeholder="username">
-            <input class="input" type="email" name="email-address" id="" placeholder="email-address">
-            <input class="input" type="password" name="password" id="" placeholder="password">
-            <input class="input" type="password" name="password-confirmation" id="" placeholder="password confirmation"> -->
             <input class="username-submit input" type="submit" value="next">
             <div class="sign-up-promp">
-                <p class="sign-up-note">If you're a DOCTOR create an account here <a href="" class="sign-up-link"> Sign Up</a></p>
+                <p class="sign-up-note">Already have an account? login here <a href="{% url 'username_form'%}" class="sign-up-link"> Login</a></p>
                 
             </div>
         </form>

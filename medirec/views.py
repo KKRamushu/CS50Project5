@@ -1,16 +1,35 @@
 from django.shortcuts import render
-from .forms import SignUpForm
+from .forms import SignUpForm, UsernameForm, LoginForm
 
 
-# Create your views here.
+
 def index(request):
     return render(request, "medirec/index.html")
 
-def loginForm(request):
+def username_form(request):
     #open login form    
-    return render(request, "medirec/login.html")
-    
-def register(request):
+    form = UsernameForm()
+    return render(request, "medirec/login.html",{'form':form, 'username':''})
+
+def password_form(request):
+    #check username existance and request password for user
+    if request.method == 'POST':
+        form = UsernameForm(request.POST)
+        login_form = LoginForm()
+        if form.is_valid():
+            user_id = form.cleaned_data['user_identification']
+            return render(request, "medirec/login.html",{'login_form':login_form, 'username':user_id})      
+    else:
+        return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
+
+def registration_form(request):
     #open registration form
     form = SignUpForm()
     return render(request,"medirec/register.html", {'form':form})
+
+def register(request):
+    #get data from form and save it to database
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid:
+            user = form.save()
