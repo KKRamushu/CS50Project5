@@ -208,7 +208,7 @@ a{
     border: 1px solid #FAF9F6;
     margin-top: 8px;
 }
-.username-submit{
+.username-submit, .password-submit{
     background-color: #FF5349;
     color: #FAF9F6;
 }

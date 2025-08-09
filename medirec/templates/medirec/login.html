@@ -16,12 +16,13 @@
         </form>
                     
         {%else%}
-        <form action="" class="login-form">
+        <form action="{% url 'login' %}" method="post" class="login-form">
             {%csrf_token%}
             <h4 class="user-input-note">Hello! {{username}}</h4>
+            <input type="hidden" name="username" value="{{username}}">
             <p class="user-input-note">Please enter your password to login</p>
             {{login_form.as_table}}
-            <input class="username-submit input" type="submit" value="Login">
+            <input class="password-submit input" type="submit" value="Login">
         </form>
         {%endif%}
     </div>

@@ -22,6 +22,20 @@ def password_form(request):
     else:
         return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
 
+def login(request):
+    if request.method == 'POST':
+
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            password = form.cleaned_data['password']
+            user = {'username':username, 'password': password}
+            return render(request, "medirec/dashboard.html",{'user':user})
+        else:
+            return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
+    else:
+        return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
+
 def registration_form(request):
     #open registration form
     form = SignUpForm()
