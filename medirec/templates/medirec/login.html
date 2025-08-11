@@ -2,11 +2,10 @@
 {% block body %}
 <div class="page-div" id="login">
     <div class="login-form-container">
-        {% if not username %}
+        {% if not user %}
         <form class="login-form" action="{% url 'password_form' %}" method="post">
             {%csrf_token%}
             <p class="user-input-note">please enter a username, email address, ID number that is associated to your account or file!</p>
-            <input type="hidden" name="username" value="{{username}}">
             {{form.as_table}}
             <input class="username-submit input" type="submit" value="next">
             <div class="sign-up-promp">
@@ -16,14 +15,25 @@
         </form>
                     
         {%else%}
-        <form action="{% url 'login' %}" method="post" class="login-form">
-            {%csrf_token%}
-            <h4 class="user-input-note">Hello! {{username}}</h4>
-            <input type="hidden" name="username" value="{{username}}">
-            <p class="user-input-note">Please enter your password to login</p>
-            {{login_form.as_table}}
-            <input class="password-submit input" type="submit" value="Login">
-        </form>
+            {% if user.user_type == 'doctor' %}
+            <form action="{% url 'login' %}" method="post" class="login-form">
+                {%csrf_token%}
+                <h4 class="user-input-note">Hello! Dr {{username}}</h4>
+                <input type="hidden" name="username" value="{{user.username}}">
+                <p class="user-input-note">Please enter your password to login</p>
+                {{login_form.as_table}}
+                <input class="password-submit input" type="submit" value="Login">
+            </form>
+            {% else %}
+            <form action="{% url 'login' %}" method="post" class="login-form">
+                {%csrf_token%}
+                <h4 class="user-input-note">Hello! {{user.name}}</h4>
+                <input type="hidden" name="username" value="{{user.username}}">
+                <p class="user-input-note">please use the OTP sent to your terminal to login!</p>
+                {{login_form.as_table}}
+                <input class="password-submit input" type="submit" value="Login">
+            </form>
+            {% endif %}
         {%endif%}
     </div>
 </div>
