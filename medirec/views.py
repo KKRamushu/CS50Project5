@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .forms import SignUpForm, UsernameForm, LoginForm
 from .models import User, Doctor, Patient, Patient_file
+from .utils import create_OTP, verify_OTP
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
@@ -16,7 +17,6 @@ def user_identifyer(identification):
     try:
         user = User.objects.get(Q(username=identification)|
                                 Q(email=identification)|
-                                Q(phoneNumber=identification)|
                                 Q(id=identification))
         return user
     except User.DoesNotExist:
