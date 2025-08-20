@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.cache import cache
 from .forms import SignUpForm, UsernameForm, LoginForm
 from .models import User, Doctor, Patient, Patient_file
 from .utils import create_OTP, verify_OTP
@@ -29,10 +30,13 @@ def password_form(request):
         login_form = LoginForm()
         if form.is_valid():
             user_id = form.cleaned_data['user_identification']
-            user = user_identifyer(user_id)
-            return render(request, "medirec/login.html",{'login_form':login_form, 'user':user})      
+            user = {'username':user_id, 'user_type':'patient'} #user_identifyer(user_id)
+            if user['user_type'] is 'patient':
+                otp = create_OTP(user['username'])
+                print(f"the login OTP for {user['username']}: {otp}")
+            return render(request, "medirec/login.html",{'login_form':login_form, 'user':user, 'username':user['username']})      
     else:
-        return render(request, "medirec/login.html",{'form':UsernameForm(), 'user':''})
+        return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
 
 def login(request):
     if request.method == 'POST':
@@ -41,8 +45,14 @@ def login(request):
         if form.is_valid():
             username = request.POST.get('username')
             password = form.cleaned_data['password']
-            user = {'username':username, 'password': password}
-            return render(request, "medirec/dashboard.html",{'user':user})
+            if verify_OTP(username, password):
+                user = {'username':username, 'password': password}
+                cache.delete(username)
+                return render(request, "medirec/dashboard.html",{'user':user})
+            else:
+                cache.delete(username)
+                return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
+    
         else:
             return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
     else:
