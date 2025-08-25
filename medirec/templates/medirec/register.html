@@ -3,6 +3,7 @@
 <div class="page-div" id="register">
     <div class="login-form-container form-container">
         <form class="register-form" action="" method="post">
+            {% csrf_token %}
             {{form.as_table}}
             <input class="username-submit input" type="submit" value="next">
             <div class="sign-up-promp">

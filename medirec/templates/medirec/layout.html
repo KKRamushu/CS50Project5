@@ -14,7 +14,11 @@
         <div class="nav-links-div">
             <a href="#services" class="nav-link">services</a>
             <a href="#about" class="nav-link">about</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="nav-link">sing out</a>
+            {% else %}
             <a href="{% url 'username_form'%}" class="nav-link">sing in</a>
+            {% endif %}
         </div>
     </div>
     {% block body %}
