@@ -5,8 +5,8 @@ from django.db import models
 class User(AbstractUser):
     USER_TYPE_CHOICES = (('doctor','doctor'), ('patient','patient'),)
     user_type = models.CharField(max_length=7, choices=USER_TYPE_CHOICES, default='doctor')
-    name = models.CharField(max_length=64, blank=True)
-    surname = models.CharField(max_length=64, blank=True)
+    #name = models.CharField(max_length=64, blank=True)
+    #surname = models.CharField(max_length=64, blank=True)
 
 #Doctor Profile
 class Doctor(models.Model):

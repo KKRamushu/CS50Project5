@@ -2,10 +2,10 @@
 {% block body %}
 <div class="page-div" id="register">
     <div class="login-form-container form-container">
-        <form class="register-form" action="" method="post">
+        <form class="register-form" action="{% url 'register'%}" method="post">
             {% csrf_token %}
             {{form.as_table}}
-            <input class="username-submit input" type="submit" value="next">
+            <input class="username-submit input" type="submit" value="Sign Up">
             <div class="sign-up-promp">
                 <p class="sign-up-note">Already have an account? login here <a href="{% url 'username_form'%}" class="sign-up-link"> Login</a></p>
                 

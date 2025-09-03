@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
 
 def index(request):
+    if request.user.is_authenticated:
+        return(dashboard(request))
     return render(request, "medirec/index.html")
 
 def dashboard(request):
@@ -89,9 +91,11 @@ def register(request):
     #get data from form and save it to database
     if request.method == 'POST':
         form = SignUpForm(request.POST)
-        if form.is_valid:
-            user = form.save()
+        if form.is_valid():
+            form.save()
+            
+            redirect('username_form')
         else:
-            return redirect('"registration_form')
+            print(form.errors)
         
-    return redirect('"registration_form')
+    return redirect('registration_form')
