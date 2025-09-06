@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Doctor, User
+from .models import Doctor, User, Patient_file, Patient
 
 #Doctor signup Form that creates a User and a Doctor portfolio
 class SignUpForm(UserCreationForm):
@@ -42,6 +42,61 @@ class SignUpForm(UserCreationForm):
             )
 
         return user
+    
+#Patient and File creation form
+class PatientForm(UserCreationForm):
+    class Meta:
+        model = Patient
+        fields = [
+            "first_name"
+            "last_name"
+            "patient_id", 
+            "date_of_birth", 
+            "contact", 
+            "address", 
+            "gender", 
+            "blood_type", 
+            "allergies"
+        ]
+    widgets = {
+        "last_name" : forms.TextInput(attrs={'class':'input','placeholder':'Last Name'}),
+        "first_name" : forms.TextInput(attrs={'class':'input','placeholder':'First Name'}),
+        "patient_id": forms.TextInput(attrs={"class": "input", "placeholder": "Patient ID"}),
+        "date_of_birth": forms.DateInput(attrs={"type": "date", "class": "input"}),
+        "contact": forms.TextInput(attrs={"class": "input", "placeholder": "Contact number"}),
+        "address": forms.Textarea(attrs={"class": "input", "placeholder": "Address", "rows": 3}),
+        "gender": forms.Select(attrs={"class": "input"}),
+        "blood_type": forms.Select(attrs={"class": "input"}),
+        "allergies": forms.Textarea(attrs={"class": "input", "placeholder": "Allergies (optional)", "rows": 3}),
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in self.fields:
+            self.fields[field_name].label = ""
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.user_type = 'patient'
+
+        if commit:
+            user.save()
+            Patient.objects.create(
+                user = user,
+                patient_id = self.cleaned_data['patient_id'],
+                date_of_birth = self.cleaned_data['date_of_birth'],
+                contact = self.cleaned_data['contact'],
+                address = self.cleaned_data['address'],
+                gender = self.cleaned_data['gender'],
+                blood_type = self.cleaned_data['blood_type'],
+                allergies = self.cleaned_data['allergies']
+            )
+
+            Patient_file.objects.create(
+                patient = 
+            )
 
 #Username collection form
 class UsernameForm(forms.Form):
