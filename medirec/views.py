@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.cache import cache
-from .forms import SignUpForm, UsernameForm, LoginForm
+from .forms import SignUpForm, UsernameForm, LoginForm, PatientForm
 from .models import User, Doctor, Patient, Patient_file
 from .utils import create_OTP, verify_OTP
 from django.contrib.auth import get_user_model, authenticate, login, logout
@@ -99,3 +99,7 @@ def register(request):
             print(form.errors)
         
     return redirect('registration_form')
+
+def add_patient(request):
+    form = PatientForm()
+    return render(request, "medirec/dashboard.html",{'form':form})

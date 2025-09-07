@@ -2,7 +2,17 @@
 
 {% block body %}
 <div class="page-div">
-    <div class="home-welcome-header">{{user.username}}</div>
+    {% if form %}
+        <form action="">
+            {% csrf_token %}
+            {{form.as_table}}
+        </form>
+    {%else%}
+    <div class="home-welcome-header">       
+        <button class="input">Patients</button>
+        <a href="{% url 'add_patient' %}"><button class="input">New Patient</button></a>  
+    </div>
+    {% endif %}
 
 </div>
 {% endblock %}

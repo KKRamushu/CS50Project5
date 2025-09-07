@@ -45,33 +45,29 @@ class SignUpForm(UserCreationForm):
     
 #Patient and File creation form
 class PatientForm(UserCreationForm):
+    patient_id = forms.CharField(max_length=13, label="", widget=forms.TextInput(attrs={"class": "input", "placeholder": "Patient ID"}))
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "class": "input"}))
+    contact = forms.CharField(max_length=10, label="", widget=forms.TextInput(attrs={"class": "input", "placeholder": "Contact number"}))
+    address = forms.CharField(label="", widget= forms.Textarea(attrs={"class": "input", "placeholder": "Address", "rows": 3}))
+    gender = forms.ChoiceField(label="", choices=[('male','male'),('female','female'),('other','other')], widget=forms.Select(attrs={"class": "input"}))
+    bloode_type = forms.ChoiceField(label="", choices=[('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),('AB+','AB+'),('AB-','AB-'),('O+','O+'),('O-','0-')], 
+                                            widget=forms.Select(attrs={"class": "input"}))
+    allergies = forms.CharField(required=False, label="", widget=forms.Textarea(attrs={"class": "input", "placeholder": "Allergies (optional)", "rows": 3}))
+    
     class Meta:
-        model = Patient
-        fields = [
-            "first_name"
-            "last_name"
-            "patient_id", 
-            "date_of_birth", 
-            "contact", 
-            "address", 
-            "gender", 
-            "blood_type", 
-            "allergies"
-        ]
-    widgets = {
-        "last_name" : forms.TextInput(attrs={'class':'input','placeholder':'Last Name'}),
-        "first_name" : forms.TextInput(attrs={'class':'input','placeholder':'First Name'}),
-        "patient_id": forms.TextInput(attrs={"class": "input", "placeholder": "Patient ID"}),
-        "date_of_birth": forms.DateInput(attrs={"type": "date", "class": "input"}),
-        "contact": forms.TextInput(attrs={"class": "input", "placeholder": "Contact number"}),
-        "address": forms.Textarea(attrs={"class": "input", "placeholder": "Address", "rows": 3}),
-        "gender": forms.Select(attrs={"class": "input"}),
-        "blood_type": forms.Select(attrs={"class": "input"}),
-        "allergies": forms.Textarea(attrs={"class": "input", "placeholder": "Allergies (optional)", "rows": 3}),
-    }
+        model = User
+        fields = ["first_name","last_name","email"]
+        widgets = {
+            'last_name' : forms.TextInput(attrs={'class':'input','placeholder':'Last Name'}),
+            'first_name' : forms.TextInput(attrs={'class':'input','placeholder':'First Name'}),
+            'email' : forms.EmailInput(attrs={'class':'input','placeholder':'Email Address'}),
+        }
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields.pop("password1", None)
+        self.fields.pop("password2", None)
         for field_name in self.fields:
             self.fields[field_name].label = ""
 
@@ -83,7 +79,7 @@ class PatientForm(UserCreationForm):
 
         if commit:
             user.save()
-            Patient.objects.create(
+            patient = Patient.objects.create(
                 user = user,
                 patient_id = self.cleaned_data['patient_id'],
                 date_of_birth = self.cleaned_data['date_of_birth'],
@@ -95,8 +91,9 @@ class PatientForm(UserCreationForm):
             )
 
             Patient_file.objects.create(
-                patient = 
+                patient = patient
             )
+            return user
 
 #Username collection form
 class UsernameForm(forms.Form):
