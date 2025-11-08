@@ -1,17 +1,170 @@
 {%extends "medirec/layout.html"%}
 
 {% block body %}
-<div class="page-div">
+<div class="page-div dash-page">
     {% if form %}
-        <form action="">
+    <div class="login-form-container form-container">
+        <form class="register-form" action="{% url 'register_patient' %}" method="post">
             {% csrf_token %}
-            {{form.as_table}}
+            {% for field in form %}
+                <div class="form-field">
+                    {% if field.label_tag != "" %}
+                    {{field.label_tag}} {{field}}
+                    {% else %}
+                    {{field}}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <input class="username-submit input" type="submit" value="Register Patient">
         </form>
-    {%else%}
-    <div class="home-welcome-header">       
-        <button class="input">Patients</button>
-        <a href="{% url 'add_patient' %}"><button class="input">New Patient</button></a>  
     </div>
+
+    {%elif patients %}
+    <div class="dash-container">
+        <div class="dash-options-panel">
+            <button class="input dash-option">All Patients</button>
+            <button class="input dash-option">My Patients</button>
+            <a class="input dash-option" href="{% url 'add_patient' %}">New Patient</a>  
+        </div>
+        <div class="dash-data-panel">
+            <table>
+                <thead> 
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>ID Number</th>
+                    <th>Email</th>
+                
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+
+                        <tr class="dash-data">
+                            <td>
+                                <a href="{% url 'view_file' patient_id=patient.id %}">
+                                    {{patient.first_name.capitalize}}
+                                </a></td>
+                            <td>{{patient.last_name.capitalize}}</td>
+                            <td>{{patient.id}}</td>
+                            <td>{{patient.username}}</td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>       
+        
+    </div>
+    {% elif patient %}
+
+    <div class="dash-container">
+        <div class="dash-options-panel">
+            <div class="patient-profile">
+                <div class="patient-image"></div>
+                <h2>{{patient.user.first_name}} {{patient.user.last_name}}</h2>
+            </div>
+            <div class="dash-options-container">
+                <a href="" class="dash-option">Patient Info</a>
+                <a href="" class="dash-option">Visit</a>
+                <ul class="visit-list">
+                    <li class="visit-item">New Visit</li>
+                    <li class="visit-item">17/10/25</li>
+                    <li class="visit-item">12/05/25</li>
+                    <li class="visit-item">02/03/25</li>
+                    <li class="visit-item">16/11/24</li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="dash-data-panel">
+            <div class="patient-details">
+                <h4>Personal details</h2>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Name</strong>
+                        <small>{{patient.user.first_name}} {{patient.user.last_name}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Date of birth</strong>
+                        <p class="detail-lable">{{patient.date_of_birth}}</p>
+                    </div>
+                    
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>ID Number</strong>
+                        <p>{{patient.patient_id}}</p>
+                    </div>
+                    
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Phone Number</strong>
+                        <p>{{patient.contact}}</p>
+                    </div>
+                    
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Address</strong>
+                        <p>{{patient.address}}</p>
+                    </div>
+                    
+                </div>
+            </div>
+
+                        <div class="patient-details">
+                <h4>Madical Information</h2>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Name</strong>
+                        <small>{{patient.user.first_name}} {{patient.user.last_name}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Date of birth</strong>
+                        <p class="detail-lable">{{patient.date_of_birth}}</p>
+                    </div>
+                    
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>ID Number</strong>
+                        <p>{{patient.patient_id}}</p>
+                    </div>
+                    
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Phone Number</strong>
+                        <p>{{patient.contact}}</p>
+                    </div>
+                    
+                </div>
+                <div class="details">
+                    <div class="bullet"></div>
+                    <div class="detail-lable">
+                        <strong>Address</strong>
+                        <p>{{patient.address}}</p>
+                    </div>
+                    
+                </div>
+
+        </div>       
+        
+    </div>
+
     {% endif %}
 
 </div>

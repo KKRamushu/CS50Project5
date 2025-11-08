@@ -18,7 +18,7 @@
             {% if user.user_type == 'doctor' %}
             <form action="{% url 'login' %}" method="post" class="login-form">
                 {%csrf_token%}
-                <h4 class="user-input-note">Hello! Dr {{user.username}}</h4>
+                <h4 class="user-input-note">Hello! Dr {{user.first_name}}</h4>
                 <input type="hidden" name="username" value="{{user.username}}">
                 <p class="user-input-note">Please enter your password to login</p>
                 {{login_form.as_table}}
@@ -27,7 +27,7 @@
             {% else %}
             <form action="{% url 'login' %}" method="post" class="login-form">
                 {%csrf_token%}
-                <h4 class="user-input-note">Hello! {{user.username}}</h4>
+                <h4 class="user-input-note">Hello! {{user.first_name}}</h4>
                 <input type="hidden" name="username" value="{{user.username}}">
                 <p class="user-input-note">please use the OTP sent to your terminal to login!</p>
                 {{login_form.as_table}}

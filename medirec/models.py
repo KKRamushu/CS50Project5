@@ -16,7 +16,7 @@ class Doctor(models.Model):
 #Patient profile
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="patient_profile")
-    patient_id = models.CharField(max_length=13,unique=True, null=True)
+    patient_id = models.CharField(max_length=14,unique=True, null=True)
     date_of_birth = models.DateField(null=True)
     contact = models.CharField(max_length=11, null=True)
     address = models.TextField(null=True)

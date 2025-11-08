@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 from .forms import SignUpForm, UsernameForm, LoginForm, PatientForm
 from .models import User, Doctor, Patient, Patient_file
+from django.contrib import messages
 from .utils import create_OTP, verify_OTP
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
@@ -12,7 +13,8 @@ def index(request):
     return render(request, "medirec/index.html")
 
 def dashboard(request):
-    return render(request, "medirec/dashboard.html")
+    patients = User.objects.all()
+    return render(request, "medirec/dashboard.html", {'patients':patients})
 
 def sign_out(request):
     logout(request)
@@ -24,9 +26,10 @@ def username_form(request):
     return render(request, "medirec/login.html",{'form':form, 'username':''})
 
 def user_identifyer(identification):
+    identification = identification.upper()
     try:
-        user = User.objects.get(Q(username=identification)|
-                                Q(email=identification))
+        user = User.objects.get(Q(username__iexact=identification)|
+                                Q(email__iexact=identification))
         return user
     except User.DoesNotExist:
         return None
@@ -40,7 +43,7 @@ def password_form(request):
             user_id = form.cleaned_data['user_identification']
             user = user_identifyer(user_id)
             if user.user_type == 'patient':
-                otp = create_OTP(user['username'])
+                otp = create_OTP(user.username)
                 print(f"the login OTP for {user.username}: {otp}")
             return render(request, "medirec/login.html",{'login_form':login_form, 'user':user, 'username':user.username})      
     else:
@@ -68,7 +71,7 @@ def otp_login(request, user, password):
     if verify_OTP(user.username, password):
         login(request, user)
         cache.delete(user.username)
-        return redirect("login",{'user':user})
+        return redirect("dashboard")
     else:
         return render("medirec/login.html",{'form':password_form(), 'username':user.username, 'error':
                                                      'incorrect OTP entered'})
@@ -103,3 +106,20 @@ def register(request):
 def add_patient(request):
     form = PatientForm()
     return render(request, "medirec/dashboard.html",{'form':form})
+
+def register_patient(request):
+    #get paient details from form and create a user, patient, and patient file
+    if request.method == 'POST':
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Patient registered successfully!!")
+            return redirect("dashboard")
+        else:
+            print(form.errors)
+        return render(request, "medirec/dashboard.html",{"form":PatientForm()})
+    
+def view_patient_file(request, patient_id):
+    patient_file = Patient_file.objects.get(patient__user__id = patient_id)
+    patient = Patient.objects.get(user__id=patient_id)
+    return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file})
