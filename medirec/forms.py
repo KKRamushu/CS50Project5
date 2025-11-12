@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Doctor, User, Patient_file, Patient
+from .models import Doctor, User, Patient_file, Patient, Patient_Visit, Patient_Vitals
 
 #Doctor signup Form that creates a User and a Doctor portfolio
 class SignUpForm(UserCreationForm):
@@ -104,3 +104,34 @@ class LoginForm(forms.Form):
     password = forms.CharField(
     label="",
     widget=forms.PasswordInput(attrs={'class': 'input', 'placeholder': 'Enter password'}))
+
+class VisitForm(forms.ModelForm):
+    class Meta:
+        model= Patient_Visit
+        fields = ['reason', 'diagnosis', 'treatment', 'notes']
+        widgets = {
+            'reason' : forms.TextInput(attrs={'class':'input','placeholder':'Reason for visit'}),
+            'diagnosis' : forms.TextInput(attrs={'class':'input','placeholder':'Diagnosis'}),
+            'treatment' : forms.TextInput(attrs={'class':'input','placeholder':'Treatment'}),
+            'Notes' : forms.TextInput(attrs={'class':'input','placeholder':'Notes'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in self.fields:
+            self.fields[field_name].label = ""
+
+class VitalsForm(forms.ModelForm):
+    class Meta:
+        model= Patient_Vitals
+        fields = ['blood_pressure','temperature','heart_rate']
+        widgets = {
+            'blood_pressure' : forms.TextInput(attrs={'class':'input', 'placeholder':'Blood Pressure'}),
+            'temperature' : forms.NumberInput(attrs={'class':'input', 'placeholder':'Body Temperature' ,'step':'0.1'}),
+            'heart_rate' : forms.NumberInput(attrs={'class':'input', 'placeholder':'Heart Rate'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in self.fields:
+            self.fields[field_name].label = ""

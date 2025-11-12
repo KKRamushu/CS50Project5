@@ -26,6 +26,23 @@ class Patient(models.Model):
     blood_type = models.CharField(max_length=4, choices=BLOOD_TYPE_CHOICES, null=True)
     allergies = models.TextField(blank=True, null=True)
 
+#Cosultation Record 
+class Patient_Visit(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="visits")
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name="doctor_visits")
+    visit_date = models.DateTimeField(auto_now_add=True)
+    reason = models.TextField(null=True, blank=True)
+    diagnosis = models.TextField(null=True, blank=True)
+    treatment = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+
+#Patient Vitals for every visit
+class Patient_Vitals(models.Model):
+    visit = models.OneToOneField(Patient_Visit, on_delete=models.CASCADE, related_name="vitals")
+    blood_pressure = models.CharField(max_length=10, blank=True)
+    temperature = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
+    heart_rate = models.PositiveIntegerField(blank=True, null=True)
+
 #Medical record file
 class Patient_file(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)

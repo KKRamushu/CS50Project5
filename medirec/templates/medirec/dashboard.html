@@ -64,7 +64,7 @@
             </div>
             <div class="dash-options-container">
                 <a href="" class="dash-option">Patient Info</a>
-                <a href="" class="dash-option">Visit</a>
+                <a href="{% url 'visit' patient_id=patient.patient_id %}" class="dash-option">Visit</a>
                 <ul class="visit-list">
                     <li class="visit-item">New Visit</li>
                     <li class="visit-item">17/10/25</li>
@@ -75,6 +75,20 @@
             </div>
 
         </div>
+        {% if visit %}
+        <div class="dash-data-panel">
+            <form action="" class="form-container">
+                {% csrf_token %}
+                {% for field in visit_form %}
+                    {{field}}
+                {% endfor %}
+                {% for field in vitals_form %}
+                    {{field}}
+                {% endfor %}
+            </form>
+            
+        </div>
+        {% else %}
         <div class="dash-data-panel">
             <div class="patient-details">
                 <h4>Personal details</h2>
@@ -161,7 +175,8 @@
                     
                 </div>
 
-        </div>       
+        </div> 
+        {% endif %}      
         
     </div>
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.cache import cache
-from .forms import SignUpForm, UsernameForm, LoginForm, PatientForm
+from .forms import SignUpForm, UsernameForm, LoginForm, PatientForm, VisitForm, VitalsForm
 from .models import User, Doctor, Patient, Patient_file
 from django.contrib import messages
 from .utils import create_OTP, verify_OTP
@@ -122,4 +122,9 @@ def register_patient(request):
 def view_patient_file(request, patient_id):
     patient_file = Patient_file.objects.get(patient__user__id = patient_id)
     patient = Patient.objects.get(user__id=patient_id)
-    return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file})
+    return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
+
+# Open visit form
+def visit(request, patient_id):
+        patient = Patient.objects.get(patient_id=patient_id)   
+        return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
