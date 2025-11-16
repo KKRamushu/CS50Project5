@@ -67,14 +67,15 @@
                 <a href="{% url 'visit' patient_id=patient.patient_id %}" class="dash-option">Visit</a>
                 <ul class="visit-list">
                     {% for visit in visits %}
-                    <li class="visit-item">{{visit.reason}}</li>
+                    
+                    <li class="visit-item"><a href="{% url 'view_visit' visit_id=visit.id %}">{{visit.reason}}</a></li>
                     {% endfor %}
 
                 </ul>
             </div>
 
         </div>
-        {% if visit %}
+        {% if new_visit %}
         <div class="dash-data-panel">
             <form method="post" action="{% url 'save_visit' patient_id=patient.patient_id%}" class="form-container">
                 {% csrf_token %}
@@ -96,6 +97,56 @@
             </form>
             
         </div>
+        {% elif visit %}
+        <div class="dash-data-panel">
+            <div class="patient-details">
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Reason for visits</strong>
+                        <small>{{visit.reason}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Diagnosis</strong>
+                        <small>{{visit.diagnosis}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Treatment</strong>
+                        <small>{{visit.treatment}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Notes</strong>
+                        <small>{{visit.notes}}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="patient-details">
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Blood Pressure</strong>
+                        <small>{{vitals.blood_pressure}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Body Temp</strong>
+                        <small>{{vitals.temperature}}</small>
+                    </div>
+                </div>
+                <div class="details">
+                    <div class="detail-lable">
+                        <strong>Heart rate</strong>
+                        <small>{{vitals.heart_rate}}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         {% else %}
         <div class="dash-data-panel">
             <div class="patient-details">
@@ -103,45 +154,22 @@
                 <div class="details">
                     <div class="bullet"></div>
                     <div class="detail-lable">
-                        <strong>Name</strong>
-                        <small>{{patient.user.first_name}} {{patient.user.last_name}}</small>
+                        <strong>Allergies</strong>
+                        <small>{{patient.allergies}}</small>
                     </div>
                 </div>
                 <div class="details">
                     <div class="bullet"></div>
                     <div class="detail-lable">
-                        <strong>Date of birth</strong>
-                        <p class="detail-lable">{{patient.date_of_birth}}</p>
+                        <strong>Blood Type</strong>
+                        <p class="detail-lable">{{patient.blood_type}}</p>
                     </div>
                     
                 </div>
-                <div class="details">
-                    <div class="bullet"></div>
-                    <div class="detail-lable">
-                        <strong>ID Number</strong>
-                        <p>{{patient.patient_id}}</p>
-                    </div>
-                    
-                </div>
-                <div class="details">
-                    <div class="bullet"></div>
-                    <div class="detail-lable">
-                        <strong>Phone Number</strong>
-                        <p>{{patient.contact}}</p>
-                    </div>
-                    
-                </div>
-                <div class="details">
-                    <div class="bullet"></div>
-                    <div class="detail-lable">
-                        <strong>Address</strong>
-                        <p>{{patient.address}}</p>
-                    </div>
-                    
-                </div>
+                
             </div>
 
-                        <div class="patient-details">
+            <div class="patient-details">
                 <h4>Madical Information</h2>
                 <div class="details">
                     <div class="bullet"></div>

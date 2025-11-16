@@ -252,14 +252,15 @@ label{
 
 /***Dashboard***/
 .dash-page{
-    background-color: #FF5349;
+    background-image: linear-gradient(46deg, rgba(0, 0, 255, 0.751) ,rgba(255, 255, 255, 0.8) , rgb(20, 0, 93) 80%);/*
+    background-color: #FF5349;*/
 }
 .dash-container{
     display: flex;
     width: 98%;
     height: 80vh;
     margin-top: 10vh;
-    background-color: gray;
+    background-color: rgb(49, 49, 49);
     border-radius: 12px;
     box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
 
@@ -354,7 +355,8 @@ tr{
     margin: 4px;
     padding: 4px;
     border-radius: 16px;
-    background-color: var(--background-light-gray);
+    background-color: rgb(29, 29, 29);
+    color: var(--background-light-gray);
    /* border: 1px solid var(--text-offwhite);*/
     box-shadow: var(--shadow-black);
 }
@@ -366,11 +368,11 @@ tr{
     align-items: center;
     justify-content: start;
     flex-direction: row;
-    border-radius: 32px;
+    border-radius: 12px;
     margin-bottom: 4px;
     padding: 4px;/*
     border: 1px solid var(--text-offwhite);*/
-    box-shadow: var(--inner-shadow);
+    box-shadow: 1px 1px 6px rgba(111, 193, 252, 0.3);
 }
 
 .bullet{

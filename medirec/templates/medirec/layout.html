@@ -19,7 +19,13 @@
         </div>
         <div class="nav-links-div">
             {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}" class="nav-link">sing out</a>
+                {% if patient %}
+                    <a href="{% url 'index' %}" class="nav-link">Home</a>
+                {% endif %}
+                {% if not patients %}
+                <a href="{% url 'dashboard' %}" class="nav-link">Patients</a>
+                {% endif%}
+                <a href="{% url 'logout' %}" class="nav-link">sing out</a>
             {% else %}
             <a href="#services" class="nav-link">services</a>
             <a href="#about" class="nav-link">about</a>

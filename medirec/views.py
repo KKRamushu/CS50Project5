@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.cache import cache
 from .forms import SignUpForm, UsernameForm, LoginForm, PatientForm, VisitForm, VitalsForm
-from .models import User, Doctor, Patient, Patient_file
+from .models import User, Doctor, Patient, Patient_file, Patient_Visit, Patient_Vitals
 from django.contrib import messages
 from .utils import create_OTP, verify_OTP
 from django.contrib.auth import get_user_model, authenticate, login, logout
@@ -128,7 +128,7 @@ def view_patient_file(request, patient_id):
 # Open visit form
 def visit(request, patient_id):
     patient = Patient.objects.get(patient_id=patient_id)   
-    return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
+    return render(request, "medirec/dashboard.html",{'patient':patient,'new_visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
 
 # Save patient visit
 def save_visit(request, patient_id):
@@ -156,3 +156,9 @@ def save_visit(request, patient_id):
             return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
     else:
         return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
+
+def view_visit(request, visit_id):
+    visit = Patient_Visit.objects.get(id=visit_id)
+    vitals = Patient_Vitals.objects.get(visit=visit)
+    patient = visit.patient
+    return render(request,  "medirec/dashboard.html",{"visit":visit, "vitals":vitals, "patient":patient})
