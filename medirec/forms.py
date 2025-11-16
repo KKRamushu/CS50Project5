@@ -107,13 +107,13 @@ class LoginForm(forms.Form):
 
 class VisitForm(forms.ModelForm):
     class Meta:
-        model= Patient_Visit
+        model = Patient_Visit
         fields = ['reason', 'diagnosis', 'treatment', 'notes']
         widgets = {
             'reason' : forms.TextInput(attrs={'class':'input','placeholder':'Reason for visit'}),
             'diagnosis' : forms.TextInput(attrs={'class':'input','placeholder':'Diagnosis'}),
             'treatment' : forms.TextInput(attrs={'class':'input','placeholder':'Treatment'}),
-            'Notes' : forms.TextInput(attrs={'class':'input','placeholder':'Notes'}),
+            'notes' : forms.TextInput(attrs={'class':'input','placeholder':'Notes'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -123,7 +123,7 @@ class VisitForm(forms.ModelForm):
 
 class VitalsForm(forms.ModelForm):
     class Meta:
-        model= Patient_Vitals
+        model = Patient_Vitals
         fields = ['blood_pressure','temperature','heart_rate']
         widgets = {
             'blood_pressure' : forms.TextInput(attrs={'class':'input', 'placeholder':'Blood Pressure'}),

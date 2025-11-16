@@ -66,25 +66,33 @@
                 <a href="" class="dash-option">Patient Info</a>
                 <a href="{% url 'visit' patient_id=patient.patient_id %}" class="dash-option">Visit</a>
                 <ul class="visit-list">
-                    <li class="visit-item">New Visit</li>
-                    <li class="visit-item">17/10/25</li>
-                    <li class="visit-item">12/05/25</li>
-                    <li class="visit-item">02/03/25</li>
-                    <li class="visit-item">16/11/24</li>
+                    {% for visit in visits %}
+                    <li class="visit-item">{{visit.reason}}</li>
+                    {% endfor %}
+
                 </ul>
             </div>
 
         </div>
         {% if visit %}
         <div class="dash-data-panel">
-            <form action="" class="form-container">
+            <form method="post" action="{% url 'save_visit' patient_id=patient.patient_id%}" class="form-container">
                 {% csrf_token %}
                 {% for field in visit_form %}
-                    {{field}}
+                    {% if field.name == 'reason' %}
+                        {{field}}
+                        {% for field in vitals_form %}
+                            {{field}}
+                        {% endfor %}
+                    {% else %}
+                        {{field}}
+                    {% endif %}
                 {% endfor %}
-                {% for field in vitals_form %}
-                    {{field}}
-                {% endfor %}
+                
+                <div class="home-actions-div">
+                    <input type="button" class="home-actions" value="Cancel value">
+                    <input type="submit" class="home-actions" value="save Visit">
+                </div>
             </form>
             
         </div>

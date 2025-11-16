@@ -108,7 +108,7 @@ def add_patient(request):
     return render(request, "medirec/dashboard.html",{'form':form})
 
 def register_patient(request):
-    #get paient details from form and create a user, patient, and patient file
+    #get patient details from form and create a user, patient, and patient file
     if request.method == 'POST':
         form = PatientForm(request.POST)
         if form.is_valid():
@@ -122,9 +122,37 @@ def register_patient(request):
 def view_patient_file(request, patient_id):
     patient_file = Patient_file.objects.get(patient__user__id = patient_id)
     patient = Patient.objects.get(user__id=patient_id)
-    return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
+    visits = patient.visits.all()
+    return render(request, "medirec/dashboard.html",{"visits": visits, "patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
 
 # Open visit form
 def visit(request, patient_id):
-        patient = Patient.objects.get(patient_id=patient_id)   
+    patient = Patient.objects.get(patient_id=patient_id)   
+    return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
+
+# Save patient visit
+def save_visit(request, patient_id):
+    patient = Patient.objects.get(patient_id=patient_id) 
+
+    #get data from forms and create visit and vitals models
+    if request.method == "POST":
+        visit_form = VisitForm(request.POST)
+        vitals_form = VitalsForm(request.POST)
+
+        if visit_form.is_valid() and vitals_form.is_valid():
+            print("forms valid", request.user)
+            visit = visit_form.save(commit=False)
+            visit.patient = patient
+            visit.doctor = Doctor.objects.get(user=request.user)
+            visit.save()
+
+            vitals = vitals_form.save(commit=False)
+            vitals.visit = visit
+            vitals.save()
+            print("visit saved")
+            messages.success(request,"Patient visit recorded successfully!!")
+            return redirect("view_file", patient.user.id)
+        else:
+            return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
+    else:
         return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })

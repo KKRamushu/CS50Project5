@@ -15,4 +15,5 @@ urlpatterns = [
     path('register patient', views.register_patient, name="register_patient"),
     path('view_patient/<int:patient_id>', views.view_patient_file, name="view_file"),
     path('visit/<int:patient_id>', views.visit, name='visit'),
+    path('save visit/<int:patient_id>', views.save_visit, name='save_visit'),
     ]
