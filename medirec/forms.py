@@ -11,22 +11,21 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ["first_name","last_name","username","email","password1","password2"]
         widgets = {
-            'last_name' : forms.TextInput(attrs={'class':'input','placeholder':'Last Name'}),
-            'first_name' : forms.TextInput(attrs={'class':'input','placeholder':'First Name'}),
-            'username' : forms.TextInput(attrs={'class':'input','placeholder':'Username'}),
-            'email' : forms.EmailInput(attrs={'class':'input','placeholder':'Email Address'}),
+            'last_name' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Last Name'}),
+            'first_name' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'First Name'}),
+            'username' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Username'}),
+            'email' : forms.EmailInput(attrs={'class':'detail-value-input','placeholder':'Email Address'}),
         }
 
-    #remove labels from form fields
+    #remove help_text from form fields
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({'class':'input','placeholder':'Enter a password'})
-        self.fields['password2'].widget.attrs.update({'class':'input','placeholder':'Repeat password'})
+        self.fields['password1'].widget.attrs.update({'class':'detail-value-input','placeholder':'Enter a password'})
+        self.fields['password2'].widget.attrs.update({'class':'detail-value-input','placeholder':'Repeat password'})
         self.fields['password1'].help_text=''
         self.fields['password2'].help_text=''
         self.fields['username'].help_text=''
-        for field_name in self.fields:
-            self.fields[field_name].label = ""
+
 
     #custom save method that creates a User and a portfolio linked to it
     def save(self, commit=True):
@@ -45,30 +44,23 @@ class SignUpForm(UserCreationForm):
     
 #Patient and File creation form
 class PatientForm(forms.ModelForm):
-    patient_id = forms.CharField(max_length=13, label="", widget=forms.TextInput(attrs={"class": "input", "placeholder": "Patient ID"}))
-    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "class": "labeled-input", "placholder":"Date of birth"}))
-    contact = forms.CharField(max_length=10, widget=forms.TextInput(attrs={"class": "input", "placeholder": "Contact number"}))
-    address = forms.CharField(label="", widget= forms.Textarea(attrs={"class": "input", "placeholder": "Address", "rows": 3}))
-    gender = forms.ChoiceField(choices=[('male','male'),('female','female'),('other','other')], widget=forms.Select(attrs={"class": "labeled-input"}))
+    patient_id = forms.CharField(max_length=13, label="Patient ID", widget=forms.TextInput(attrs={"class": "detail-value-input", "placeholder": "Patient ID"}))
+    date_of_birth = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "class": "detail-value-input", "placholder":"Date of birth"}))
+    contact = forms.CharField(max_length=10, widget=forms.TextInput(attrs={"class": "detail-value-input", "placeholder": "Contact number"}))
+    address = forms.CharField(label="Address", widget= forms.Textarea(attrs={"class": "detail-value-input", "placeholder": "Address", "rows": 3}))
+    gender = forms.ChoiceField(choices=[('male','male'),('female','female'),('other','other')], widget=forms.Select(attrs={"class": "detail-value-input"}))
     blood_type = forms.ChoiceField(label="Blood type",choices=[('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),('AB+','AB+'),('AB-','AB-'),('O+','O+'),('O-','0-')], 
-                                            widget=forms.Select(attrs={"class": "labeled-input"}))
-    allergies = forms.CharField(required=False, label="", widget=forms.Textarea(attrs={"class": "input", "placeholder": "Allergies (optional)", "rows": 3}))
+                                            widget=forms.Select(attrs={"class": "detail-value-input"}))
+    allergies = forms.CharField(required=False, label="Allergies", widget=forms.Textarea(attrs={"class": "detail-value-input", "placeholder": "Allergies (optional)", "rows": 3}))
     
     class Meta:
         model = User
         fields = ["first_name","last_name","email"]
         widgets = {
-            'last_name' : forms.TextInput(attrs={'class':'input','placeholder':'Last Name'}),
-            'first_name' : forms.TextInput(attrs={'class':'input','placeholder':'First Name'}),
-            'email' : forms.EmailInput(attrs={'class':'input','placeholder':'Email Address'}),
+            'last_name' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Last Name'}),
+            'first_name' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'First Name'}),
+            'email' : forms.EmailInput(attrs={'class':'detail-value-input','placeholder':'Email Address'}),
         }
-
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name in self.fields:
-            if field_name not in  ["date_of_birth", "gender", "blood_type"]:
-                self.fields[field_name].label = ""
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -110,28 +102,25 @@ class VisitForm(forms.ModelForm):
         model = Patient_Visit
         fields = ['reason', 'diagnosis', 'treatment', 'notes']
         widgets = {
-            'reason' : forms.TextInput(attrs={'class':'input','placeholder':'Reason for visit'}),
-            'diagnosis' : forms.TextInput(attrs={'class':'input','placeholder':'Diagnosis'}),
-            'treatment' : forms.TextInput(attrs={'class':'input','placeholder':'Treatment'}),
-            'notes' : forms.TextInput(attrs={'class':'input','placeholder':'Notes'}),
+            'reason' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Reason for visit'}),
+            'diagnosis' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Diagnosis'}),
+            'treatment' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Treatment'}),
+            'notes' : forms.TextInput(attrs={'class':'detail-value-input','placeholder':'Notes'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name in self.fields:
-            self.fields[field_name].label = ""
+
 
 class VitalsForm(forms.ModelForm):
     class Meta:
         model = Patient_Vitals
         fields = ['blood_pressure','temperature','heart_rate']
+        labels = {'blood_pressure':'BP',
+                  'temperature':'Temp',
+                  'heart_rate':'Pulse'}
         widgets = {
-            'blood_pressure' : forms.TextInput(attrs={'class':'input', 'placeholder':'Blood Pressure'}),
-            'temperature' : forms.NumberInput(attrs={'class':'input', 'placeholder':'Body Temperature' ,'step':'0.1'}),
-            'heart_rate' : forms.NumberInput(attrs={'class':'input', 'placeholder':'Heart Rate'}),
+            'blood_pressure' : forms.TextInput(attrs={'class':'detail-value-input', 'placeholder':'Blood Pressure'}),
+            'temperature' : forms.NumberInput(attrs={'class':'detail-value-input', 'placeholder':'Body Temperature' ,'step':'0.1'}),
+            'heart_rate' : forms.NumberInput(attrs={'class':'detail-value-input', 'placeholder':'Heart Rate'}),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name in self.fields:
-            self.fields[field_name].label = ""
+ 

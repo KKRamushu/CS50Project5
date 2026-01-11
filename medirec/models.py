@@ -13,6 +13,9 @@ class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="doctor_profile")
     specialization = models.CharField(max_length=64, blank=True)
 
+    def __str__(self):
+        return f"Dr. {self.user.first_name[:1].upper() if self.user.first_name else ""} {self.user.last_name}"
+
 #Patient profile
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="patient_profile")

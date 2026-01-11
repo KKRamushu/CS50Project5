@@ -260,7 +260,7 @@ label{
     width: 98%;
     height: 80vh;
     margin-top: 10vh;
-    background-color: rgb(49, 49, 49);
+    background-color: rgba(49, 49, 49, 0.4);
     border-radius: 12px;
     box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.5);
 
@@ -274,8 +274,43 @@ label{
     align-items: center;
     justify-content: flex-start;
 }
+.dash-data-grid{
+    width: 98%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 4px;
+}
 
+.patient-card{
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: conic-gradient(#969494,#e9e7e7, #afaeae,#9c9c9c,#eaeaea, #9f9f9f,
+                                #a4a3a3,#d9d7d7, #c1bfbf,rgb(159, 159, 159),#d0cfcf, #9b9a9a);
+    padding: 8px;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: #FAF9F6;
+}
 
+.patient-card-image{
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #FF5349;
+    border: 2px solid #FF5349;
+    overflow: clip;
+}
 .patient-profile{
     width: 100%;
     display: flex;
@@ -291,6 +326,23 @@ label{
     background-color: var(--background-orange);
     border: 2px solid --background-aqua;
 }
+.image-head{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid gray;
+    background-color: gray;
+}
+.image-body{
+    width: 250px;
+    height: 100px;
+    border-radius: 90%;
+    border-top: 4px solid gray;
+    border-left: 4px solid gray;
+    border-right: 4px solid gray;
+    background-color: gray;
+    overflow: hidden;
+}
 
 .dash-options-container{
     width: 100%;
@@ -303,10 +355,11 @@ label{
     justify-content: center;
     align-items: center;
     text-align: center;
-   
+    margin-bottom: 8px;
     width: 80%;
     height: 34px;
     border-radius: 8px;
+    background-color: rgb(56, 56, 56);
     box-shadow: var(--shadow-black);
 
 }
@@ -316,52 +369,37 @@ label{
     width: 75%;
     height: 98%;
     align-self: center;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     flex-direction: column;
     border-left: 2px solid #FAF9F6;
 }
 
-table{
-
-    width: 96%;
-}
-
-
-th, td{
-    width: 25%;
-    text-align: center;
-}
-tr{
-    display: flex;
-    width: 100%;
-    height: 40px;
-    align-items: center;
-    border-radius: 8px;
-    border: 0;
-    border-bottom: 1px solid #FAF9F6;
-    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
-}
-
 /** Patient details**/
 
-.patient-details{
-    height: 50%;
+.patient-details-container, .visit-details-container{
+    height: 98%;
     width: 98%;
-    min-width: 80%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 4px;
     margin: 4px;
     padding: 4px;
-    border-radius: 16px;
-    background-color: rgb(29, 29, 29);
+    border-radius: 16px;/*
+    background-color: rgb(29, 29, 29);*/
     color: var(--background-light-gray);
-   /* border: 1px solid var(--text-offwhite);*/
-    box-shadow: var(--shadow-black);
 }
 
-.details{
+.details-container{
+    width: 96%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.details, .visit-details{
     width: 96%;
     height: 80px;
     display: flex;
@@ -370,23 +408,76 @@ tr{
     flex-direction: row;
     border-radius: 12px;
     margin-bottom: 4px;
-    padding: 4px;/*
+    padding: 4px;
+    background-color: rgb(56, 56, 56);/*
     border: 1px solid var(--text-offwhite);*/
     box-shadow: 1px 1px 6px rgba(111, 193, 252, 0.3);
 }
 
-.bullet{
-    width: 8px;
-    height: 8px;
-    margin: 4px;
-    border-radius: 50% 50%;
-    border: 2px solid var(--text-offwhite);
-    background-color: var(--background-orange);
+.patient-detail{
+   flex: 1;
+   margin: 0 4px 4px 4px;
 }
+
 .detail-lable{
     width: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+/*******VISIT******/
+.visit-details-container{
+    height: 98%;
+
+}
+tbody,thead{
+    width: 100%;
+}
+th,tr{
+    display: flex;
+    justify-content: space-between;
+}
+td,th{
+    width: 32%;
+}
+.visit-table{
+    width: 100%;
+    border: 2px solid white;
+}
+.visit-details{
+    width: 80%;
+    background-color: rgb(56, 56, 56);
+    display: flex;
+    flex-direction: row;
+}
+.detail-lable{
+    width: 30%;
+}
+.detail-value, .detail-value-input{
+    width: 70%;
+    background-color: rgb(56, 56, 56);
+}
+.detail-value-input{
+    height: 100%;
+    border: 0;
+    color: #FAF9F6;
+}
+.visit-form-button{
+    background-color: rgb(56, 56, 56);
+    border: 0;
+    color: gray;
+    margin: 2px;
+}
+.vital-details-container{
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.vital-details{
+    width: 23.5%;
+    background-color: rgb(56, 56, 56);
 }

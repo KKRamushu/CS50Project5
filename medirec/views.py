@@ -122,8 +122,13 @@ def register_patient(request):
 def view_patient_file(request, patient_id):
     patient_file = Patient_file.objects.get(patient__user__id = patient_id)
     patient = Patient.objects.get(user__id=patient_id)
+    return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
+
+# open Patient Visit List
+def visits(request, patient_id):
+    patient = Patient.objects.get(patient_id=patient_id)
     visits = patient.visits.all()
-    return render(request, "medirec/dashboard.html",{"visits": visits, "patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
+    return render(request, "medirec/dashboard.html",{"visits": visits, "patient":patient,'vitals_form':VitalsForm, 'visit_form': VisitForm })
 
 # Open visit form
 def visit(request, patient_id):
