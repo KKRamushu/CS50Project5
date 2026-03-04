@@ -5,7 +5,7 @@ from .models import Doctor, User, Patient_file, Patient, Patient_Visit, Patient_
 #Doctor signup Form that creates a User and a Doctor portfolio
 class SignUpForm(UserCreationForm):
 
-    specialization = forms.CharField(max_length=64, label="", widget=forms.TextInput(attrs={'class':'input', 'placeholder':'Specialization e.g.(Ganeral Practitionor)'}))
+    specialization = forms.CharField(max_length=64, label="Specialization", widget=forms.TextInput(attrs={'class':'detail-value-input', 'placeholder':'Specialization e.g.(Ganeral Practitionor)'}))
 
     class Meta:
         model = User

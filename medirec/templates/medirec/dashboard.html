@@ -67,19 +67,18 @@
     {%elif patients %}
     <div class="dash-container">
         <div class="dash-options-panel">
-            <a class=" dash-option" style="margin-top: 24px;">All Patients</a>
-            <a class="dash-option">My Patients</a>
+            <a class=" dash-option" id="all-patients" href="" style="margin-top: 24px;">All Patients</a>
+            <a class="dash-option" id="my-patients" href="">My Patients</a>
             <a class="dash-option" href="{% url 'add_patient' %}">New Patient</a>  
         </div>
         <div class="dash-data-panel">
             <div class="dash-data-grid">
             {% for patient in patients %}                 
                 <a class="patient-card" href="{% url 'view_file' patient_id=patient.id %}">
-                    <div >
+                    <div >      
                         <div class="patient-card-image">
-                            <div class="image-head"></div>
-                            <div class="image-body"></div>
-                        </div>
+
+                        </div>   
                         <h4 style="text-align: center;">{{patient.first_name}} {{patient.last_name}}</h4>
                     </div>                  
                 </a>
@@ -93,7 +92,9 @@
     <div class="dash-container">
         <div class="dash-options-panel">
             <div class="patient-profile">
-                <div class="patient-image"></div>
+                <div class="patient-image">
+
+                </div>
                 <h2>{{patient.user.first_name}} {{patient.user.last_name}}</h2>
             </div>
             <div class="dash-options-container">
@@ -218,12 +219,12 @@
         <div class="dash-data-panel">
             <h4>Patient Visits</h2>
                 <table class="visit-details-container visits-table">
-                    <thead>
+                    <thead class="table-head">
                         <th>Reason for Visit</th>
                         <th>Date</th>
                         <th>Doctor</th>
                     </thead>
-                    <tbody>
+                    <tbody class="table-body">
                     {% for visit in visits %}
                        
                         <tr class="details">

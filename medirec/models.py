@@ -8,6 +8,15 @@ class User(AbstractUser):
     #name = models.CharField(max_length=64, blank=True)
     #surname = models.CharField(max_length=64, blank=True)
 
+    def serialize(self):
+        return{
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'username': self.username,
+            'user_type': self.user_type,
+        }
+
 #Doctor Profile
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="doctor_profile")
@@ -28,6 +37,18 @@ class Patient(models.Model):
     BLOOD_TYPE_CHOICES = (('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),('AB+','AB+'),('AB-','AB-'),('O+','O+'),('O-','O-'))
     blood_type = models.CharField(max_length=4, choices=BLOOD_TYPE_CHOICES, null=True)
     allergies = models.TextField(blank=True, null=True)
+
+    def serialize(self):
+        return{
+            "user" : self.user.serialize(),
+            "patient_id" : self.patient_id,
+            "date_of_birth" : self.date_of_birth,
+            "contact" : self.contact,
+            "address" : self.address,
+            "gender" : self.gender,
+            "blood_type" : self.blood_type,
+            "allergies" : self.allergies
+         }
 
 #Cosultation Record 
 class Patient_Visit(models.Model):

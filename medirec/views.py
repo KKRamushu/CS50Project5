@@ -6,15 +6,25 @@ from django.contrib import messages
 from .utils import create_OTP, verify_OTP
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
+import json
+from django.http import JsonResponse
 
 def index(request):
+    allPatients = User.objects.all()
     if request.user.is_authenticated:
-        return(dashboard(request))
+        return render(request, "medirec/dashboard.html", {'patients':allPatients})
     return render(request, "medirec/index.html")
 
-def dashboard(request):
-    patients = User.objects.all()
-    return render(request, "medirec/dashboard.html", {'patients':patients})
+def all_patients(request):
+    allPatients = Patient.objects.all()
+    ##return render(request, "medirec/dashboard.html", {'patients':patients})
+    return JsonResponse([patient.serialize() for patient in allPatients], safe=False)
+
+#view my patients
+def my_patients(request):
+    doctor = Doctor.objects.get(user__id=request.user.id)
+    myPatients = Patient.objects.filter(visits__doctor=doctor).distinct()
+    return JsonResponse([patient.serialize() for patient in myPatients], safe=False)
 
 def sign_out(request):
     logout(request)
@@ -81,7 +91,7 @@ def password_login(request, username, password):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return redirect("dashboard")
+        return redirect("index")
     else:
         return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
 

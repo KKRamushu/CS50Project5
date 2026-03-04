@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediRec</title>
+    <script src="{% static 'medirec/script.js' %}"></script>
     <link href="{% static 'medirec/styles.css' %}" rel="stylesheet">
 </head>
 <body>
@@ -14,7 +15,7 @@
         {%if user.is_authenticated%}
         <h2>{{user.first_name}}</h2>
         {% else %}
-            <a href="{% url 'index'%}"><h2>Madirec</h2></a>
+            <a href="{% url 'all_patients'%}"><h2>Madirec</h2></a>
         {% endif %}
         </div>
         <div class="nav-links-div">
@@ -23,13 +24,16 @@
                     <a href="{% url 'index' %}" class="nav-link">Home</a>
                 {% endif %}
                 {% if not patients %}
-                <a href="{% url 'dashboard' %}" class="nav-link">Patients</a>
+                <a href="" id="all-patients-nav" class="nav-link">Patients</a>
                 {% endif%}
                 <a href="{% url 'logout' %}" class="nav-link">sing out</a>
             {% else %}
+            {% if request.path != '/home' %} 
+                <a href="#home" class="nav-link">Home</a>
+            {% endif %}
             <a href="#services" class="nav-link">services</a>
             <a href="#about" class="nav-link">about</a>
-            <a href="{% url 'username_form'%}" class="nav-link">sing in</a>
+            <a href="" class="nav-link" id="sign-in">sing in</a>
             {% endif %}
         </div>
     </div>
