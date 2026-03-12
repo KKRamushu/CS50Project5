@@ -20,12 +20,10 @@
         </div>
         <div class="nav-links-div">
             {% if user.is_authenticated %}
-                {% if patient %}
+                {% if not patients %}
                     <a href="{% url 'index' %}" class="nav-link">Home</a>
                 {% endif %}
-                {% if not patients %}
-                <a href="" id="all-patients-nav" class="nav-link">Patients</a>
-                {% endif%}
+
                 <a href="{% url 'logout' %}" class="nav-link">sing out</a>
             {% else %}
             {% if request.path != '/home' %} 

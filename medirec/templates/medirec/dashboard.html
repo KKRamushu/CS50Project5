@@ -4,64 +4,72 @@
 <div class="page-div dash-page">
     {% if form %}
     <div class="dash-container">
-        <form class="visit-details-container" action="{% url 'register_patient' %}" method="post">
-            {% csrf_token %}
-                <div class="vital-details-container">
-                    <div class="visit-details" style="margin-right: 4px;">                 
-                        <strong class="detail-lable">{{form.first_name.label_tag}}</strong>   
-                        {{form.first_name}}
-                    </div>
-                    <div class="visit-details" style="margin-left: 4px;">                 
-                        <strong class="detail-lable">{{form.last_name.label_tag}}</strong>   
-                        {{form.last_name}}
+        <div class="dash-options-panel">
+            <a class=" dash-option" id="all-patients" href="" style="margin-top: 24px;">All Patients</a>
+            <a class="dash-option" id="my-patients" href="">My Patients</a>
+            <a class="dash-option" href="{% url 'add_patient' %}">New Patient</a>  
+        </div>
+        <div class="dash-data-panel">
+            <form class="visit-details-container" action="{% url 'register_patient' %}" method="post">
+                {% csrf_token %}
+                    <div class="vital-details-container">
+                        <div class="visit-details" style="margin-right: 4px;">                 
+                            <strong class="detail-lable">{{form.first_name.label_tag}}</strong>   
+                            {{form.first_name}}
+                        </div>
+                        <div class="visit-details" style="margin-left: 4px;">                 
+                            <strong class="detail-lable">{{form.last_name.label_tag}}</strong>   
+                            {{form.last_name}}
+                        </div> 
                     </div> 
-                </div> 
-                <div class="vital-details-container">
-                    <div class="visit-details" style="margin-right: 4px;">                 
-                        <strong class="detail-lable">{{form.patient_id.label_tag}}</strong>   
-                        {{form.patient_id}}
-                    </div>
-                    <div class="visit-details" style="margin-left: 4px;">                 
-                        <strong class="detail-lable">{{form.date_of_birth.label_tag}}</strong>   
-                        {{form.date_of_birth}}
+                    <div class="vital-details-container">
+                        <div class="visit-details" style="margin-right: 4px;">                 
+                            <strong class="detail-lable">{{form.patient_id.label_tag}}</strong>   
+                            {{form.patient_id}}
+                        </div>
+                        <div class="visit-details" style="margin-left: 4px;">                 
+                            <strong class="detail-lable">{{form.date_of_birth.label_tag}}</strong>   
+                            {{form.date_of_birth}}
+                        </div> 
                     </div> 
-                </div> 
-                <div class="vital-details-container">
-                    <div class="visit-details" style="margin-right: 4px;">                 
-                        <strong class="detail-lable">{{form.contact.label_tag}}</strong>   
-                        {{form.contact}}
+                    <div class="vital-details-container">
+                        <div class="visit-details" style="margin-right: 4px;">                 
+                            <strong class="detail-lable">{{form.contact.label_tag}}</strong>   
+                            {{form.contact}}
+                        </div>
+                        <div class="visit-details" style="margin: 0 4px; ">                 
+                            <strong class="detail-lable">{{form.email.label_tag}}</strong>   
+                            {{form.email}}
+                        </div> 
+                        <div class="visit-details" style="margin-left: 4px;">                 
+                            <strong class="detail-lable">{{form.address.label_tag}}</strong>   
+                            {{form.address}}
+                        </div> 
                     </div>
-                    <div class="visit-details" style="margin: 0 4px; ">                 
-                        <strong class="detail-lable">{{form.email.label_tag}}</strong>   
-                        {{form.email}}
-                    </div> 
-                    <div class="visit-details" style="margin-left: 4px;">                 
-                        <strong class="detail-lable">{{form.address.label_tag}}</strong>   
-                        {{form.address}}
-                    </div> 
-                </div>
-                <div class="vital-details-container">
-                    <div class="visit-details" style="margin-right: 4px;">                 
-                        <strong class="detail-lable">{{form.gender.label_tag}}</strong>   
-                        {{form.gender}}
+                    <div class="vital-details-container">
+                        <div class="visit-details" style="margin-right: 4px;">                 
+                            <strong class="detail-lable">{{form.gender.label_tag}}</strong>   
+                            {{form.gender}}
+                        </div>
+                        <div class="visit-details" style="margin-left: 4px;">                 
+                            <strong class="detail-lable">{{form.blood_type.label_tag}}</strong>   
+                            {{form.blood_type}}
+                        </div> 
+                    </div>  
+                    <div class="vital-details-container">
+                        <div class="visit-details">
+                            <strong class="detail-lable">{{form.allergies.label_tag}}</strong>   
+                            {{form.allergies}}                        
+                        </div>
                     </div>
-                    <div class="visit-details" style="margin-left: 4px;">                 
-                        <strong class="detail-lable">{{form.blood_type.label_tag}}</strong>   
-                        {{form.blood_type}}
-                    </div> 
-                </div>  
-                <div class="vital-details-container">
-                    <div class="visit-details">
-                        <strong class="detail-lable">{{form.allergies.label_tag}}</strong>   
-                        {{form.allergies}}                        
+                    <div class="vital-details-container">
+                        <a class="visit-details visit-form-button" href="{% url 'index' %}">Cancel</a>
+                        <!--<input class="visit-details visit-form-button" type="button" value="Cancel">-->
+                        <input class="visit-details visit-form-button" type="submit" value="Register Patient">
                     </div>
-                </div>
-                <div class="vital-details-container">
-                    <input class="visit-details visit-form-button" type="button" value="Cancel">
-                    <input class="visit-details visit-form-button" type="submit" value="Register Patient">
-                </div>
 
-        </form>
+            </form>
+        </div>
     </div>
 
     {%elif patients %}
