@@ -134,11 +134,16 @@ def view_patient_file(request, patient_id):
     patient = Patient.objects.get(user__id=patient_id)
     return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
 
+#view patient information
+def patient_info(request, patient_id):
+    patient = Patient.objects.get(user__id=patient_id)
+    return JsonResponse(patient.serialize())
+
 # open Patient Visit List
 def visits(request, patient_id):
     patient = Patient.objects.get(patient_id=patient_id)
     visits = patient.visits.all()
-    return render(request, "medirec/dashboard.html",{"visits": visits, "patient":patient,'vitals_form':VitalsForm, 'visit_form': VisitForm })
+    return JsonResponse([visit.serialize() for visit in visits], safe=False)
 
 # Open visit form
 def visit(request, patient_id):
@@ -174,6 +179,6 @@ def save_visit(request, patient_id):
 
 def view_visit(request, visit_id):
     visit = Patient_Visit.objects.get(id=visit_id)
-    vitals = Patient_Vitals.objects.get(visit=visit)
+    vitals = visit.vitals
     patient = visit.patient
-    return render(request,  "medirec/dashboard.html",{"visit":visit, "vitals":vitals, "patient":patient})
+    return JsonResponse(vitals.serialize())

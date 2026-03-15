@@ -106,15 +106,15 @@
                 <h2>{{patient.user.first_name}} {{patient.user.last_name}}</h2>
             </div>
             <div class="dash-options-container">
-                <a href="{% url 'view_file' patient_id=patient.user.id %}" class="dash-option">Patient Info</a>
-                <a href="{% url 'visits' patient_id=patient.patient_id %}" class="dash-option">Visits</a>
+                <a href="" data-patient-id="{{patient.user.id}}" id="patient-info" class="dash-option">Patient Info</a>
+                <a href="" data-patient-id="{{patient.patient_id}}" id="patient-visits" class="dash-option">Visits</a>
                 <a href="{% url 'visit' patient_id=patient.patient_id %}" class="dash-option">New Visit</a>
             </div>
 
         </div>
         {% if new_visit %}
         <div class="dash-data-panel">
-            <form class="visit-details-container" method="post" action="{% url 'save_visit' patient_id=patient.patient_id%}" class="form-container">
+            <form class="visit-details-container" id="new-visit-form" method="post" action="{% url 'save_visit' patient_id=patient.patient_id%}" class="form-container">
                 {% csrf_token %}
                 {% for field in visit_form %}
                     {% if field.name == 'reason' %}
@@ -150,7 +150,7 @@
         </div>
         {% elif visit %}
         <div class="dash-data-panel">
-            <div class="visit-details-container">
+            <div class="visit-details-container" id="patient-visit-details">
                 <h6>Visit Details</h6>
                 <div class="visit-details">
                     <div class="detail-lable">
@@ -248,7 +248,7 @@
 
         {% else %}
         <div class="dash-data-panel">
-            <div class="patient-details-container">
+            <div class="patient-details-container" id="patient-info-panel">
                 <h4>Personal details</h2>
                 <div class="details">                 
                     <strong class="detail-lable">Name:</strong>   

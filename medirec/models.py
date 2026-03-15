@@ -24,6 +24,13 @@ class Doctor(models.Model):
 
     def __str__(self):
         return f"Dr. {self.user.first_name[:1].upper() if self.user.first_name else ""} {self.user.last_name}"
+    
+    def serialize(self):
+        return{
+            "user":self.user.serialize(),
+            "specialization":self.specialization,
+            "doctorName":str(self)
+        }
 
 #Patient profile
 class Patient(models.Model):
@@ -60,12 +67,32 @@ class Patient_Visit(models.Model):
     treatment = models.TextField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
 
+    def serialize(self):
+        return{
+            "visitId" : self.id,
+            "patient" : self.patient.serialize(),
+            "doctor" : self.doctor.serialize(),
+            "visit_date" : self.visit_date,
+            "reason" : self.reason,
+            "diagnostic" : self.diagnosis,
+            "treatment" : self.treatment,
+            "notes" : self.notes
+         }
+
 #Patient Vitals for every visit
 class Patient_Vitals(models.Model):
     visit = models.OneToOneField(Patient_Visit, on_delete=models.CASCADE, related_name="vitals")
     blood_pressure = models.CharField(max_length=10, blank=True)
     temperature = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
     heart_rate = models.PositiveIntegerField(blank=True, null=True)
+
+    def serialize(self):
+        return{
+            "visit":self.visit.serialize(),
+            "blood_pressure":self.blood_pressure,
+            "temperature":self.temperature,
+            "heart_rate":self.heart_rate
+        }
 
 #Medical record file
 class Patient_file(models.Model):

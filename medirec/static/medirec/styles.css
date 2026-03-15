@@ -381,6 +381,12 @@ label{
     color: var(--background-light-gray);
 }
 
+#new-visit-form, #patient-visit-details{
+    display: none;
+}
+#patient-info-panel{
+    display: block;
+}
 .details-container{
     width: 96%;
     display: flex;
@@ -439,6 +445,7 @@ tr{
 td,th{
     width: 32%;
 }
+
 .visit-table{
     width: 100%;
     border: 2px solid white;
