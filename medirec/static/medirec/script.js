@@ -1,15 +1,38 @@
 document.addEventListener('DOMContentLoaded', ()=>{
 
     // Element Constructor Function
-    function SuperElement(type,classes,id){ //classes must be a list
-        this.element = document.createElement(type)
-        for(const clss of classes){
-            this.element.classList.add(clss)
+    class SuperElement{
+        constructor(type,classes,id){ //classes must be a list
+            this.element = document.createElement(type)
+            if(Array.isArray(classes)){
+                for(const clss of classes){
+                    this.element.classList.add(clss)
+                }
+            }
+            if(id){
+                this.element.id = id
+            }
         }
-        if(id != ''){
-            this.element.setAttribute('id',id)
+
+        detail(lable,value){
+            let lableWrap = document.createElement('div')
+            let valueWrap = document.createElement('div')
+
+            let detailLable= document.createElement('strong')
+            let detailValue= document.createElement('small')
+
+            lableWrap.classList.add('detail-lable')
+            valueWrap.classList.add('detail-value')
+
+            detailLable.textContent = lable
+            detailValue.textContent = value
+
+            lableWrap.append(detailLable)
+            valueWrap.append(detailValue)
+
+            this.element.append(lableWrap,valueWrap)
+
         }
-        return this.element
     }
 
     //Open a list of patients with atleat one visit recorded by current doctor
@@ -47,16 +70,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
         const newDashDataGrid = new SuperElement('div',['dash-data-grid'],'')
         for(const patient of patients){
             const patientCard = new SuperElement('a',['patient-card'],'')
-            const patientName = document.createElement('h4')
+            patientName = document.createElement('h4')
 
-            patientCard.setAttribute('href',`/view_patient/${patient.user.id}`)
+            patientCard.element.setAttribute('href',`/view_patient/${patient.user.id}`)
 
             patientName.textContent = `${patient.user.first_name}`
 
-            patientCard.append(patientName)
-            newDashDataGrid.append(patientCard)
+            patientCard.element.append(patientName)
+            newDashDataGrid.element.append(patientCard.element)
         }
-        dashDataPanel.append(newDashDataGrid)
+        dashDataPanel.append(newDashDataGrid.element)
     }
 
     dashContainer.addEventListener('click',function(e){
@@ -94,80 +117,50 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 return response.json()
             })
             .then(info=>{
+
                 patientDetailsContainer = new SuperElement('div',['patient-details-container'],'')
                 heading = new SuperElement('h4',[],'')
                 heading.textContent = 'Personal details'
 
                 nameDiv = new SuperElement('div',['details'],'')
-                nameLable = new SuperElement('strong',['detail-lable'],'')
-                nameLable.textContent = 'Name:'
-                patientName = new SuperElement('small',['detail-value'],'')
-                patientName.textContent = `${info.user.first_name} ${info.user.last_name}`
-                nameDiv.append(nameLable,patientName)
+                nameDiv.detail('Name',`${info.user.first_name} ${info.user.last_name}`)
+                nameDiv = nameDiv.element
 
                 idDiv = new SuperElement('div',['details'],'')
-                idLable = new SuperElement('strong',['detail-lable'],'')
-                idLable.textContent = 'ID:'
-                patientId = new SuperElement('small',['detail-value'],'')
-                patientId.textContent = info.patient_id
-                idDiv.append(idLable,patientId)
+                idDiv.detail('ID',info.patient_id)
+                idDiv = idDiv.element
+
+                phoneNumber = new SuperElement('div',['details','patient-detail'],'')
+                phoneNumber.detail('Contact',info.contact)
+                phoneNumber = phoneNumber.element
+                email = new SuperElement('div',['details','patient-detail'],'')
+                email.detail('Email',info.user.username)
+                email = email.element
+                patientAddress = new SuperElement('div',['details','patient-detail'],'') 
+                patientAddress.detail('Address',info.address)
+                patientAddress = patientAddress.element
 
                 detailsContainer1 = new SuperElement('div',['details-container'],'')
+                detailsContainer1 = detailsContainer1.element
+                detailsContainer1.append(phoneNumber,email,patientAddress)
 
-                contactDiv = new SuperElement('div',['details','patient-detail'],'')
-                contactLabel = new SuperElement('strong',['detail-lable'],'')
-                contactLabel.textContent = 'Contact'
-                contactValue = new SuperElement('small',['detail-value'],'')
-                contactValue.textContent = info.contact
-                contactDiv.append(contactLabel, contactValue)
-
-                emailDiv = new SuperElement('div',['details','patient-detail'],'')
-                emailLabel = new SuperElement('strong',['detail-lable'],'')
-                emailLabel.textContent = 'Email'
-                emailValue = new SuperElement('small',['detail-value'],'')
-                emailValue.textContent = info.user.email
-                emailDiv.append(emailLabel, emailValue)
-
-                addressDiv = new SuperElement('div',['details','patient-detail'],'')
-                addressLabel = new SuperElement('strong',['detail-lable'],'')
-                addressLabel.textContent = 'Address'
-                addressValue = new SuperElement('small',['detail-value'],'')
-                addressValue.textContent = info.address
-                addressDiv.append(addressLabel, addressValue)
-
-                detailsContainer1.append(contactDiv, emailDiv, addressDiv)
+                gender = new SuperElement('div',['details','patient-detail'],'')
+                gender.detail('Gender :',info.gender)
+                gender =gender.element
+                bloodType = new SuperElement('div',['details','patient-detail'],'')
+                bloodType.detail('Blood Type :', info.blood_type)
+                bloodType = bloodType.element
 
                 detailsContainer2 = new SuperElement('div',['details-container'],'')
-                genderDiv = new SuperElement('div',['details','patient-detail'],'')
-                genderLabel = new SuperElement('strong',['detail-lable'],'')
-                genderLabel.textContent = 'Gender'
-                genderValue = new SuperElement('small',['detail-value'],'')
-                genderValue.textContent = info.gender
-                genderDiv.append(genderLabel, genderValue)
+                detailsContainer2 = detailsContainer2.element
+                detailsContainer2.append(gender,bloodType)
 
-                bloodDiv = new SuperElement('div',['details','patient-detail'],'')
-                bloodLabel = new SuperElement('strong',['detail-lable'],'')
-                bloodLabel.textContent = 'Blood Type'
-                bloodValue = new SuperElement('small',['detail-value'],'')
-                bloodValue.textContent = info.blood_type
-                bloodDiv.append(bloodLabel, bloodValue)
+                allergies = new SuperElement('div',['details'],'')
+                allergies.detail('Allegies :', info.allergies)
+                allergies = allergies.element
 
-                detailsContainer2.append(genderDiv, bloodDiv)
-
-                allergyDiv = new SuperElement('div',['details'],'')
-
-                allergyLabel = new SuperElement('strong',['detail-lable'],'')
-                allergyLabel.textContent = 'Allergies'
-                allergyValue = new SuperElement('small',['detail-value'],'')
-                allergyValue.textContent = info.allergies
-                editBtn = new SuperElement('input',[],'')
-                editBtn.type = 'button'
-                editBtn.value = '✏️'
-                allergyDiv.append(allergyLabel, allergyValue, editBtn)
-
-
-                patientDetailsContainer.append(heading,nameDiv,idDiv,detailsContainer1,detailsContainer2,allergyDiv)
-                dashDataPanel.append(patientDetailsContainer)
+                patientDetailsContainer.element.append(heading.element,nameDiv,idDiv,detailsContainer1,detailsContainer2,allergies)
+                dashDataPanel.append(patientDetailsContainer.element)
 
             })
         }
@@ -184,32 +177,37 @@ document.addEventListener('DOMContentLoaded', ()=>{
             .then(visits=>{
                 dashDataPanel.textContent = ''
                 heading = new SuperElement('h4',[],'')
+                heading = heading.element
                 heading.textContent = 'Patient Visits'
 
                 visitsTable = new SuperElement('table',['visit-details-container','visits-table'], '')
+                visitsTable = visitsTable.element
 
                 tableHead = new SuperElement('thead',['table-head'],'')
+                tableHead = tableHead.element
                 th1 = new SuperElement('th',[],'')
                 th2 = new SuperElement('th',[],'')
                 th3 = new SuperElement('th',[],'')
-                th1.textContent = 'Reason for Visit'
-                th2.textContent = 'Date'
-                th3.textContent = 'Doctor'
-                tableHead.append(th1,th2,th3)
+                th1.element.textContent = 'Reason for Visit'
+                th2.element.textContent = 'Date'
+                th3.element.textContent = 'Doctor'
+                tableHead.append(th1.element,th2.element,th3.element)
 
                 tableBody = new SuperElement('tbody',['table-body'],'')
+                tableBody =tableBody.element
                 for(const visit of visits){
                 
                     tableRow = new SuperElement('tr',['details','patient-visit'],'')
+                    tableRow = tableRow.element
                     tableRow.setAttribute('data-visit-id',visit.visitId)
                     tableData1 = new SuperElement('td',[])
                     tableData2 = new SuperElement('td',[])
                     tableData3 = new SuperElement('td',[])
-                    tableData1.textContent = visit.reason
-                    tableData2.textContent = visit.visit_date
-                    tableData3.textContent = visit.doctor.doctorName
+                    tableData1.element.textContent = visit.reason
+                    tableData2.element.textContent = visit.visit_date
+                    tableData3.element.textContent = visit.doctor.doctorName
 
-                    tableRow.append(tableData1,tableData2,tableData3)
+                    tableRow.append(tableData1.element,tableData2.element,tableData3.element)
                     tableBody.append(tableRow)
                 }
                 visitsTable.append(tableHead,tableBody)
@@ -217,7 +215,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
             })
         }
-
+        //EventListener for patient visit
         if(e.target.matches('.patient-visit')){
             visitId = e.target.dataset.visitId
             fetch(`/viewVisit/${visitId}`)
@@ -226,7 +224,50 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 return response.json()
             })
             .then(visit=>{
-                console.log(visit)
+            
+                visitDetailsContainer = new SuperElement('div',['visit-details-container'],'')
+                visitDetailsContainer = visitDetailsContainer.element
+
+                dashDataPanel.textContent = ''
+                heading = new SuperElement('h4',[],'')
+                heading = heading.element
+                heading.textContent = 'Patient Visit Details'
+
+                reason = new SuperElement('div',['visit-details'],'')
+                reason.detail('Reason For Visit :',visit.visit.reason)
+                reason = reason.element
+                
+                vitalsContainer = new SuperElement('div',['vital-details-container'],'')
+                vitalsContainer = vitalsContainer.element
+
+                bp = new SuperElement('div',['details','vital-details'],'')
+                bp.detail('BP :', visit.blood_pressure)
+                bp = bp.element
+                temp = new SuperElement('div',['details','vital-details'],'')
+                temp.detail('Temp :', visit.temperature)
+                temp = temp.element
+                pulse = new SuperElement('div',['details','vital-details'],'')
+                pulse.detail('Pulse :', visit.heart_rate)
+                pulse = pulse.element
+
+                vitalsContainer.append(bp,temp,pulse)
+
+                diagnosis = new SuperElement('div',['visit-details'],'')
+                diagnosis.detail('Diagnosis :',visit.visit.diagnostic)
+                diagnosis = diagnosis.element
+
+                treatment = new SuperElement('div',['visit-details'],'')
+                treatment.detail('Treatment :',visit.visit.treatment)
+                treatment = treatment.element
+
+                notes = new SuperElement('div',['visit-details'],'')
+                notes.detail('Notes :',visit.visit.notes)
+                notes = notes.element
+
+                visitDetailsContainer.append(heading,reason,vitalsContainer,diagnosis,treatment,notes)
+                dashDataPanel.append(visitDetailsContainer)
+                console.log(dashDataPanel)
+                alert(dashDataPanel)
             })
         }
     })
