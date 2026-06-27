@@ -7,20 +7,26 @@ from .utils import create_OTP, verify_OTP
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 def index(request):
     allPatients = User.objects.all()
     if request.user.is_authenticated:
         return render(request, "medirec/dashboard.html", {'patients':allPatients})
     return render(request, "medirec/index.html")
+#View current user's profile
+def my_profile(request):
+    user = request.user
+    doctor_profile = Doctor.objects.get(user=user)
+    return JsonResponse([doctor_profile.serialize()], safe=False)
 
+#view all patients
 def all_patients(request):
     allPatients = Patient.objects.all()
     ##return render(request, "medirec/dashboard.html", {'patients':patients})
     return JsonResponse([patient.serialize() for patient in allPatients], safe=False)
 
-#view my patients
+#view current doctor's patients
 def my_patients(request):
     doctor = Doctor.objects.get(user__id=request.user.id)
     myPatients = Patient.objects.filter(visits__doctor=doctor).distinct()
@@ -134,6 +140,12 @@ def view_patient_file(request, patient_id):
     patient = Patient.objects.get(user__id=patient_id)
     return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
 
+#Remove Patient from system
+def remove_patient(request, patient_id):
+    patient = Patient.objects.get(patient_id=patient_id)
+    patient.user.delete()
+    return redirect('index')
+
 #view patient information
 def patient_info(request, patient_id):
     patient = Patient.objects.get(user__id=patient_id)
@@ -147,7 +159,8 @@ def visits(request, patient_id):
 
 # Open visit form
 def visit(request, patient_id):
-    patient = Patient.objects.get(patient_id=patient_id)   
+    patient = Patient.objects.get(patient_id=patient_id) 
+    print(patient)  
     return render(request, "medirec/dashboard.html",{'patient':patient,'new_visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
 
 # Save patient visit
@@ -176,9 +189,17 @@ def save_visit(request, patient_id):
             return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
     else:
         return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
-
+#remove visit from list
+def remove_visit(request, visit_id):
+    visit = Patient_Visit.objects.get(id=visit_id)
+    patient = visit.patient
+    all_visits = patient.visits.all()
+    visit.delete()
+    return HttpResponse(status=204)
+#Open and view visit details
 def view_visit(request, visit_id):
     visit = Patient_Visit.objects.get(id=visit_id)
     vitals = visit.vitals
-    patient = visit.patient
-    return JsonResponse(vitals.serialize())
+    user_is_visit_doctor = (request.user == visit.doctor.user)
+    print(vitals.serialize())
+    return JsonResponse({"vitals":vitals.serialize(),"user_is_visit_doctor": user_is_visit_doctor})

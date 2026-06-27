@@ -5,7 +5,7 @@
     {% if form %}
     <div class="dash-container">
         <div class="dash-options-panel">
-            <a class=" dash-option" id="all-patients" href="" style="margin-top: 24px;">All Patients</a>
+            <a class=" dash-option" id="all-patients" >All Patients</a>
             <a class="dash-option" id="my-patients" href="">My Patients</a>
             <a class="dash-option" href="{% url 'add_patient' %}">New Patient</a>  
         </div>
@@ -75,7 +75,7 @@
     {%elif patients %}
     <div class="dash-container">
         <div class="dash-options-panel">
-            <a class=" dash-option" id="all-patients" href="" style="margin-top: 24px;">All Patients</a>
+            <a class=" dash-option" id="all-patients">All Patients</a>
             <a class="dash-option" id="my-patients" href="">My Patients</a>
             <a class="dash-option" href="{% url 'add_patient' %}">New Patient</a>  
         </div>
@@ -103,12 +103,14 @@
                 <div class="patient-image">
 
                 </div>
-                <h2>{{patient.user.first_name}} {{patient.user.last_name}}</h2>
+                <h2 class="dash-data-heading patient-name">{{patient.user.first_name}} {{patient.user.last_name}}</h2>
             </div>
             <div class="dash-options-container">
                 <a href="" data-patient-id="{{patient.user.id}}" id="patient-info" class="dash-option">Patient Info</a>
                 <a href="" data-patient-id="{{patient.patient_id}}" id="patient-visits" class="dash-option">Visits</a>
-                <a href="{% url 'visit' patient_id=patient.patient_id %}" class="dash-option">New Visit</a>
+                <a href="{% url 'visit' patient_id=patient.patient_id %}" class="edit-button dash-option">New Visit</a>
+                <a data-url="{% url 'remove_patient' patient_id=patient.patient_id %}" id="delete-user" class="dash-option delete-button">Delete Patient</a>
+
             </div>
 
         </div>
@@ -142,8 +144,8 @@
                 {% endfor %}
                 
                 <div class="home-actions-div">
-                    <input type="button" class="dash-option visit-form-button" value="Cancel Visit">
-                    <input type="submit" class="dash-option visit-form-button" value="save Visit">
+                    <input type="button" data-patient-id="{{patient.patient_id}}" class="dash-option visit-form-button cancel-button" id="cancel-visit-button" value="Cancel Visit">
+                    <input type="submit" class="dash-option visit-form-button confirm-button" value="save Visit">
                 </div>
             </form>
             
@@ -249,7 +251,7 @@
         {% else %}
         <div class="dash-data-panel">
             <div class="patient-details-container" id="patient-info-panel">
-                <h4>Personal details</h2>
+                <h4 class="dash-data-heading">Personal details</h2>
                 <div class="details">                 
                     <strong class="detail-lable">Name:</strong>   
                     <small class="detail-value">{{patient.user.first_name}} {{patient.user.last_name}}</small>
@@ -285,7 +287,7 @@
                 <div class="details">                 
                     <strong class="detail-lable">Allergies</strong>   
                     <small class="detail-value">{{patient.allergies}}</small>
-                    <input type="button" value="&#128394;&#6509;">
+                    <input type="button" value="edit">
                 </div>
             </div>
         </div> 

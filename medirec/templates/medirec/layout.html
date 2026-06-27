@@ -23,7 +23,7 @@
                 {% if not patients %}
                     <a href="{% url 'index' %}" class="nav-link">Home</a>
                 {% endif %}
-
+                <a href="" id="myProfile" class="nav-link">My Profile</a>
                 <a href="{% url 'logout' %}" class="nav-link">sing out</a>
             {% else %}
             {% if request.path != '/home' %} 

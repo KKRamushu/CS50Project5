@@ -5,14 +5,13 @@ from django.db import models
 class User(AbstractUser):
     USER_TYPE_CHOICES = (('doctor','doctor'), ('patient','patient'),)
     user_type = models.CharField(max_length=7, choices=USER_TYPE_CHOICES, default='doctor')
-    #name = models.CharField(max_length=64, blank=True)
-    #surname = models.CharField(max_length=64, blank=True)
 
     def serialize(self):
         return{
             'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
+            'email_address': self.email,
             'username': self.username,
             'user_type': self.user_type,
         }
@@ -21,6 +20,8 @@ class User(AbstractUser):
 class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="doctor_profile")
     specialization = models.CharField(max_length=64, blank=True)
+    contact = models.CharField(max_length=11, null=True)
+    address = models.TextField(null=True)
 
     def __str__(self):
         return f"Dr. {self.user.first_name[:1].upper() if self.user.first_name else ""} {self.user.last_name}"
@@ -29,6 +30,8 @@ class Doctor(models.Model):
         return{
             "user":self.user.serialize(),
             "specialization":self.specialization,
+            "contact" :self.contact,
+            "address" :self.address,
             "doctorName":str(self)
         }
 
@@ -72,7 +75,7 @@ class Patient_Visit(models.Model):
             "visitId" : self.id,
             "patient" : self.patient.serialize(),
             "doctor" : self.doctor.serialize(),
-            "visit_date" : self.visit_date,
+            "visit_date" : self.visit_date.strftime("%d-%m-%Y"),
             "reason" : self.reason,
             "diagnostic" : self.diagnosis,
             "treatment" : self.treatment,
@@ -85,13 +88,17 @@ class Patient_Vitals(models.Model):
     blood_pressure = models.CharField(max_length=10, blank=True)
     temperature = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
     heart_rate = models.PositiveIntegerField(blank=True, null=True)
+    height = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    weight = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     def serialize(self):
         return{
             "visit":self.visit.serialize(),
             "blood_pressure":self.blood_pressure,
             "temperature":self.temperature,
-            "heart_rate":self.heart_rate
+            "heart_rate":self.heart_rate,
+            "height":self.height,
+            "weight":self.weight
         }
 
 #Medical record file
