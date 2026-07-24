@@ -77,7 +77,7 @@ class Patient_Visit(models.Model):
             "doctor" : self.doctor.serialize(),
             "visit_date" : self.visit_date.strftime("%d-%m-%Y"),
             "reason" : self.reason,
-            "diagnostic" : self.diagnosis,
+            "diagnosis" : self.diagnosis,
             "treatment" : self.treatment,
             "notes" : self.notes
          }
@@ -85,18 +85,18 @@ class Patient_Visit(models.Model):
 #Patient Vitals for every visit
 class Patient_Vitals(models.Model):
     visit = models.OneToOneField(Patient_Visit, on_delete=models.CASCADE, related_name="vitals")
-    blood_pressure = models.CharField(max_length=10, blank=True)
-    temperature = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
-    heart_rate = models.PositiveIntegerField(blank=True, null=True)
+    bp = models.CharField(max_length=10, blank=True)
+    temp = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
+    pulse = models.PositiveIntegerField(blank=True, null=True)
     height = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     weight = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
     def serialize(self):
         return{
             "visit":self.visit.serialize(),
-            "blood_pressure":self.blood_pressure,
-            "temperature":self.temperature,
-            "heart_rate":self.heart_rate,
+            "bp":self.bp,
+            "temp":self.temp,
+            "pulse":self.pulse,
             "height":self.height,
             "weight":self.weight
         }

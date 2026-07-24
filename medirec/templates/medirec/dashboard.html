@@ -107,9 +107,10 @@
             </div>
             <div class="dash-options-container">
                 <a href="" data-patient-id="{{patient.user.id}}" id="patient-info" class="dash-option">Patient Info</a>
+                <a href="" data-patient-id="{{patient.user.id}}" id="edit-patient-info"  class="edit-button dash-option">Edit Patient Info</a>
+                <a data-url="{% url 'remove_patient' patient_id=patient.patient_id %}" id="delete-user" class="dash-option delete-button">Delete Patient</a>
                 <a href="" data-patient-id="{{patient.patient_id}}" id="patient-visits" class="dash-option">Visits</a>
                 <a href="{% url 'visit' patient_id=patient.patient_id %}" class="edit-button dash-option">New Visit</a>
-                <a data-url="{% url 'remove_patient' patient_id=patient.patient_id %}" id="delete-user" class="dash-option delete-button">Delete Patient</a>
 
             </div>
 
@@ -287,7 +288,6 @@
                 <div class="details">                 
                     <strong class="detail-lable">Allergies</strong>   
                     <small class="detail-value">{{patient.allergies}}</small>
-                    <input type="button" value="edit">
                 </div>
             </div>
         </div> 

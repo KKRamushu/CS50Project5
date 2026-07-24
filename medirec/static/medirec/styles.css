@@ -79,7 +79,13 @@ button:hover {
     flex-shrink: 0;
     justify-self: flex-end;
     max-width: 35%;
-    justify-content: space-around;
+    justify-content: right;
+    margin-right: 24px;
+}
+
+.nav-link{
+    margin: 16px;
+    color: var(--background-light-gray);
 }
 
 /* Home page */
@@ -510,13 +516,6 @@ td,th{
 .edit-visit{
     width: 60px;
 }
-.confirm-button{
-    background-color: var(--procced-color);
-}
-.cancel-button{
-    background-color: var(--cancel-color);
-}
-
 
 .visit-table{
     width: 100%;
@@ -535,6 +534,7 @@ td,th{
     width: 98%;
     height: 80%;
     background-color: rgb(56, 56, 56);
+    align-content: center;
 }
 .detail-value-input{
     height: 100%;
@@ -549,6 +549,14 @@ td,th{
     color: gray;
     margin: 2px;
 }
+
+.confirm-button{
+    background-color: var(--procced-color);
+}
+.cancel-button{
+    background-color: var(--cancel-color);
+}
+
 .vital-details-container{
     width: 80%;
     display: flex;

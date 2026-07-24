@@ -113,14 +113,14 @@ class VisitForm(forms.ModelForm):
 class VitalsForm(forms.ModelForm):
     class Meta:
         model = Patient_Vitals
-        fields = ['blood_pressure','temperature','heart_rate']
-        labels = {'blood_pressure':'BP',
-                  'temperature':'Temp',
-                  'heart_rate':'Pulse'}
+        fields = ['bp','temp','pulse']
+        labels = {'bp':'BP',
+                  'temp':'Temp',
+                  'pulse':'Pulse'}
         widgets = {
-            'blood_pressure' : forms.TextInput(attrs={'class':'detail-value-input', 'placeholder':'Blood Pressure'}),
-            'temperature' : forms.NumberInput(attrs={'class':'detail-value-input', 'placeholder':'Body Temperature' ,'step':'0.1'}),
-            'heart_rate' : forms.NumberInput(attrs={'class':'detail-value-input', 'placeholder':'Heart Rate'}),
+            'bp' : forms.TextInput(attrs={'class':'detail-value-input', 'placeholder':'Blood Pressure'}),
+            'temp' : forms.NumberInput(attrs={'class':'detail-value-input', 'placeholder':'Body Temperature' ,'step':'0.1'}),
+            'pulse' : forms.NumberInput(attrs={'class':'detail-value-input', 'placeholder':'Heart Rate'}),
         }
 
  

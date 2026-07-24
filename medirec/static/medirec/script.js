@@ -37,12 +37,35 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
         }
 
+        editDetail(lable,value,inputType,valueId){
+            let lableWrap = document.createElement('div')
+
+            let detailLable= document.createElement('strong')
+            let detailInput= document.createElement('input')
+            detailInput.classList.add('detail-value-input')
+            detailInput.type = inputType
+
+            lableWrap.classList.add('detail-lable')
+
+            if(valueId){
+                detailInput.id = valueId
+            }  
+            detailLable.textContent = lable
+            detailInput.value = value
+
+            lableWrap.append(detailLable)
+
+            this.element.append(lableWrap,detailInput)
+
+        }
+
         //Create Edit Button 
-        createEditButton(dataValue){
+        createEditButton(dataValue, action){
             const editButton = document.createElement('button')
             editButton.classList.add('dash-option','edit-button','dialog-action','edit-visit')
+            editButton.setAttribute('id',`${action}-${dataValue}`)
             editButton.setAttribute('data-field',dataValue)
-            editButton.textContent = 'Edit'
+            editButton.textContent = action
             this.element.append(editButton)
 
         }
@@ -165,6 +188,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             
         visitDetailsContainer = new SuperElement('div',['visit-details-container'],'')
         visitDetailsContainer = visitDetailsContainer.element
+        visitDetailsContainer.setAttribute('visit-id',data.vitals.visit.visitId)
 
         dashDataPanel.textContent = ''
         heading = new SuperElement('h4',['dash-data-heading'],'')
@@ -180,39 +204,39 @@ document.addEventListener('DOMContentLoaded', ()=>{
         bmiContainer = bmiContainer.element
 
         bp = new SuperElement('div',['details','vital-details'],'')
-        bp.detail('BP :', data.vitals.blood_pressure,'bp')
+        bp.detail('BP :', data.vitals.bp,'bp')
         
         temp = new SuperElement('div',['details','vital-details'],'')
-        temp.detail('Temp :', data.vitals.temperature)
+        temp.detail('Temp :', data.vitals.temp,'temp')
         
         pulse = new SuperElement('div',['details','vital-details'],'')
-        pulse.detail('Pulse :', data.vitals.heart_rate)
+        pulse.detail('Pulse :', data.vitals.pulse,'pulse')
         
         height = new SuperElement('div',['details','vital-details'],'')
-        height.detail('hieght :',data.vitals.height)
+        height.detail('height :',data.vitals.height,'height')
         
         weight = new SuperElement('div',['details','vital-details'],'')
-        weight.detail('weight :',data.vitals.weight)
+        weight.detail('weight :',data.vitals.weight,'weight')
 
         diagnosis = new SuperElement('div',['visit-details'],'')
-        diagnosis.detail('Diagnosis :',data.vitals.visit.diagnostic)
+        diagnosis.detail('Diagnosis :',data.vitals.visit.diagnosis,'diagnosis')
         
         treatment = new SuperElement('div',['visit-details'],'')
-        treatment.detail('Treatment :',data.vitals.visit.treatment)
+        treatment.detail('Treatment :',data.vitals.visit.treatment,'treatment')
 
         notes = new SuperElement('div',['visit-details'],'')
-        notes.detail('Notes :',data.vitals.visit.notes)
+        notes.detail('Notes :',data.vitals.visit.notes,'notes')
         
         if(data.user_is_visit_doctor){
-            reason.createEditButton('reason')
-            bp.createEditButton('bp')
-            temp.createEditButton('temp')
-            pulse.createEditButton('pulse')
-            height.createEditButton('height')
-            weight.createEditButton('weight')
-            diagnosis.createEditButton('diagnosis')
-            treatment.createEditButton('treatment')
-            notes.createEditButton('notes')
+            reason.createEditButton('reason','Edit')
+            bp.createEditButton('bp','Edit')
+            temp.createEditButton('temp','Edit')
+            pulse.createEditButton('pulse','Edit')
+            height.createEditButton('height','Edit')
+            weight.createEditButton('weight','Edit')
+            diagnosis.createEditButton('diagnosis','Edit')
+            treatment.createEditButton('treatment','Edit')
+            notes.createEditButton('notes','Edit')
         }
 
         reason = reason.element
@@ -310,13 +334,157 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 allergies = new SuperElement('div',['details'],'')
                 allergies.detail('Allegies :', info.allergies)
                 allergies = allergies.element
-
+                
                 patientDetailsContainer.element.append(heading,nameDiv,idDiv,detailsContainer1,detailsContainer2,allergies)
                 dashDataPanel.append(patientDetailsContainer.element)
 
             })
         }
 
+        //Edit patient info event listener
+
+        if(e.target.matches('#edit-patient-info')){
+            e.preventDefault()
+            patientId = e.target.getAttribute('data-patient-id')
+            
+            fetch(`/patient_info/${patientId}`)
+            .then(response=>{
+                if(!response.ok){throw new Error("failed to fetch patient info")}
+                return response.json()
+            })
+            .then(info=>{
+                
+                dashDataPanel.textContent = ''
+                patientDetailsContainer = new SuperElement('div',['patient-details-container'],'')
+                patientDetailsContainer = patientDetailsContainer.element
+
+                heading = new SuperElement('h4',['dash-data-heading'],'')
+                heading = heading.element
+                heading.textContent = 'Edit Patient Info'
+
+                nameDiv = new SuperElement('div',['vital-details-container'],'')
+                firstNameDiv = new SuperElement('div',['visit-details'],'')
+                firstNameDiv.editDetail('First Name',info.user.first_name,'text','id-first_name')
+                lastNameDiv = new SuperElement('div',['visit-details'],'')
+                lastNameDiv.editDetail('Last Name',info.user.last_name,'text','id-last_name')
+                
+                firstNameDiv = firstNameDiv.element
+                firstNameDiv.style = 'margin-right:4px;'
+                lastNameDiv = lastNameDiv.element
+                lastNameDiv.style = 'margin-left:4px;'
+
+                idAndDobDiv = new SuperElement('div',['vital-details-container'],'')
+                idDiv = new SuperElement('div',['visit-details'],'')
+                idDiv.editDetail('ID number',info.patient_id,'text','id-patient_id')
+                dobDiv = new SuperElement('div',['visit-details'],'')
+                dobDiv.editDetail('Date of birth',info.date_of_birth,'text','id-date_of_birth')     
+                idDiv = idDiv.element
+                idDiv.style = 'margin-right:4px;'
+                dobDiv = dobDiv.element
+                dobDiv.style = 'margin-left:4px;'
+
+                contactsDiv = new SuperElement('div',['vital-details-container'],'')
+                phoneNumber = new SuperElement('div',['visit-details'],'')
+                phoneNumber.editDetail('Phone Number',info.contact,'text','id-contact')
+                email = new SuperElement('div',['visit-details'],'')
+                email.editDetail('Email',info.user.email_address,'text', 'id-email')
+                address = new SuperElement('div',['visit-details'],'')
+                address.editDetail('Address',info.address,'text', 'id-address')
+                phoneNumber = phoneNumber.element
+                email = email.element
+                address = address.element
+                phoneNumber.style = 'margin-right:8px;'
+                address.style = 'margin-left:8px;'
+
+                genderAndBloodTypeDiv = new SuperElement('div',['vital-details-container'],'')
+                genderDiv = new SuperElement('div',['visit-details'],'')
+                genderDiv =genderDiv.element
+                genderDiv.style = 'margin-right:4px;'
+                genderLable = new SuperElement('strong',['detail-lable'],'')
+                genderLable = genderLable.element
+                genderLable.textContent = 'Gender'
+                genderOptions = new SuperElement('select',["detail-value-input"],'id-gender')
+                genderOptions = genderOptions.element
+                genderList = ['male','female','other']
+                genderList.forEach(gender=>{
+                    const options = new Option(gender)
+                    genderOptions.add(options)
+                })
+                genderOptions.value = info.gender
+                genderDiv.append(genderLable,genderOptions)
+                
+                bloodTypeDiv = new SuperElement('div',['visit-details'],'')
+                bloodTypeDiv = bloodTypeDiv.element
+                bloodTypeDiv.style = 'margin-left:4px;'
+                bloodTypeLable = new SuperElement('strong',['detail-lable'],'')
+                bloodTypeLable = bloodTypeLable.element
+                bloodTypeLable.textContent = 'Blood Type'
+                bloodTypeOptions = new SuperElement('select',["detail-value-input"],'id-blood_type')
+                bloodTypeOptions = bloodTypeOptions.element
+                bloodTypeList = ['A+','A-','B+','B-','AB+','AB-','O+','O-']
+                bloodTypeList.forEach(bloodType=>{
+                    const options = new Option(bloodType)
+                    bloodTypeOptions.add(options)
+                })
+                bloodTypeOptions.value = info.blood_type
+                bloodTypeDiv.append(bloodTypeLable,bloodTypeOptions)
+
+                allergiesDiv = new SuperElement('div',['visit-details'],'')
+                allergiesDiv.editDetail('Allergies',info.allergies,'text','id-allergies')
+                allergiesDiv = allergiesDiv.element
+
+                actionsDiv = new SuperElement('div', ["home-actions-div"],'')
+                actionsDiv = actionsDiv.element
+                cancelButton = new SuperElement('button',['dash-option', 'visit-form-button', 'cancel-button'])
+                cancelButton = cancelButton.element
+                cancelButton.textContent = 'Cancel'
+                saveButton = new SuperElement('button',['dash-option', 'visit-form-button', 'confirm-button'])
+                saveButton = saveButton.element
+                saveButton.textContent = 'Save'
+
+                nameDiv = nameDiv.element
+                idAndDobDiv = idAndDobDiv.element
+                contactsDiv = contactsDiv.element
+                genderAndBloodTypeDiv = genderAndBloodTypeDiv.element
+                genderAndBloodTypeDiv.append(genderDiv,bloodTypeDiv)
+                nameDiv.append(firstNameDiv,lastNameDiv)
+                idAndDobDiv.append(idDiv,dobDiv)
+                contactsDiv.append(phoneNumber,email,address)
+                actionsDiv.append(cancelButton,saveButton)
+
+                patientDetailsContainer.append(heading,nameDiv,idAndDobDiv,contactsDiv,genderAndBloodTypeDiv,allergiesDiv,actionsDiv)
+                dashDataPanel.append(patientDetailsContainer)
+
+                // Add event listener for save button
+
+                saveButton.addEventListener('click',()=>{
+                    context = {
+                        method : 'put',   
+                        body : JSON.stringify({
+                            first_name: document.querySelector('#id-first_name').value,
+                            last_name: document.querySelector('#id-last_name').value,
+                            patient_id: document.querySelector('#id-patient_id').value,
+                            date_of_birth: document.querySelector('#id-date_of_birth').value,
+                            contact: document.querySelector('#id-contact').value,
+                            email: document.querySelector('#id-email').value,
+                            address: document.querySelector('#id-address').value,
+                            gender: document.querySelector('#id-gender').value,
+                            blood_type: document.querySelector('#id-blood_type').value,
+                            allergies: document.querySelector('#id-allergies').value
+                        })
+                    }
+                    
+                    fetch(`/edit_patient_info/${patientId}`,context)
+                    .then(response=>{
+                        if(!response.ok){throw new Error("failed to fetch patient info")}
+                        return response.json()
+                    })
+                    .then(response=>{ alert(response)})
+                })
+                    
+            })
+
+        }
         if(e.target.matches('#patient-visits') || e.target.matches('#cancel-visit-button')){
             e.preventDefault()
             patientId = e.target.dataset.patientId
@@ -402,6 +570,45 @@ document.addEventListener('DOMContentLoaded', ()=>{
             editTextField.value = field.textContent
             field.parentNode.replaceChild(editTextField, field)
             fieldValue = field.textContent
+            editTextField.focus()
+
+            saveButton = document.createElement('button')
+            saveButton.classList.add('dash-option','edit-button','confirm-button','dialog-action','edit-visit')
+            saveButton.setAttribute('id',`save-${fieldId}`)
+            saveButton.setAttribute('data-field',fieldId)
+            saveButton.textContent = 'Save'
+
+            saveButton.addEventListener('mousedown', ()=>{
+                console.log(fieldId)
+                visitId = document.querySelector('.visit-details-container').getAttribute('visit-id')
+                context = {
+                    method : 'put',
+                    body : JSON.stringify({
+                        field : fieldId,
+                        value : editTextField.value
+                    })
+                }
+                fetch(`/editVisit/${visitId}`, context)
+                .then(response=>{
+                    if(!response.ok){throw new Error("Failed to Edit Visit detail")}
+                    return response.json()
+                })
+                .then(newValue=>{
+                    field.textContent = newValue
+                })
+            })
+            editButton = e.target
+            e.target.replaceWith(saveButton)
+
+            editTextField.addEventListener('blur',()=>{
+                setTimeout(()=>{
+                    smallField = new SuperElement('small',[],fieldId)
+                    smallField = smallField.element
+                    smallField.textContent = field.textContent
+                    editTextField.parentNode.replaceChild(smallField, editTextField)
+                    document.getElementById(`save-${fieldId}`).replaceWith(editButton)
+                },100)
+            })
        
         }
         

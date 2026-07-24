@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
 import json
 from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 def index(request):
     allPatients = User.objects.all()
@@ -189,6 +190,7 @@ def save_visit(request, patient_id):
             return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
     else:
         return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
+
 #remove visit from list
 def remove_visit(request, visit_id):
     visit = Patient_Visit.objects.get(id=visit_id)
@@ -196,6 +198,7 @@ def remove_visit(request, visit_id):
     all_visits = patient.visits.all()
     visit.delete()
     return HttpResponse(status=204)
+
 #Open and view visit details
 def view_visit(request, visit_id):
     visit = Patient_Visit.objects.get(id=visit_id)
@@ -203,3 +206,45 @@ def view_visit(request, visit_id):
     user_is_visit_doctor = (request.user == visit.doctor.user)
     print(vitals.serialize())
     return JsonResponse({"vitals":vitals.serialize(),"user_is_visit_doctor": user_is_visit_doctor})
+
+@csrf_exempt
+
+def edit_visit_detail(request, visitId):
+    visit = Patient_Visit.objects.get(id=visitId)
+    data = json.loads(request.body)
+    field = data['field']
+    value = data['value']
+
+    vitals_fields = {'bp','pulse','temp','height','weight'}
+    if field in vitals_fields:
+        setattr(visit.vitals,field,value)
+        visit.vitals.save()
+        new_value = getattr(visit.vitals, field)
+        return JsonResponse(new_value, safe=False)
+    else:
+        setattr(visit,field,value)
+        visit.save()
+        new_value = getattr(visit, field)
+        return JsonResponse(new_value, safe=False)
+
+@csrf_exempt
+
+def edit_patient_info(request,patientId):
+
+    data = json.loads(request.body)
+    patient = Patient.objects.get(user__id=patientId)
+    user = patient.user
+
+    user_fields = {'first_name','last_name','email'}
+    patient_fields = {'patient_id','date_of_birth','contact','address','gender','blood_type','allergies'}
+
+    for field in user_fields:
+        setattr(user,field,data[field])
+
+    for field in patient_fields:
+        setattr(patient,field,data[field])
+
+    user.save()
+    patient.save()
+
+    return JsonResponse({'message': 'Patient ifno updated successfully!'})
