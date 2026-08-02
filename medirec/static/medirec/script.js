@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
             return response.json()
         })
         .then(profile=>{
-            console.log(profile)
 
             dashDataPanel.textContent = ''
             dashOptionsPanel.textContent = ''
@@ -292,7 +291,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 return response.json()
             })
             .then(info=>{
-
+               
                 patientDetailsContainer = new SuperElement('div',['patient-details-container'],'')
                 heading = new SuperElement('h4',['dash-data-heading'],'')
                 heading = heading.element
@@ -310,7 +309,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                 phoneNumber.detail('Contact',info.contact)
                 phoneNumber = phoneNumber.element
                 email = new SuperElement('div',['details','patient-detail'],'')
-                email.detail('Email',info.user.username)
+                email.detail('Email',info.user.email_address)
                 email = email.element
                 patientAddress = new SuperElement('div',['details','patient-detail'],'') 
                 patientAddress.detail('Address',info.address)
@@ -341,7 +340,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             })
         }
 
-        //Edit patient info event listener
+        //Edit patient info 
 
         if(e.target.matches('#edit-patient-info')){
             e.preventDefault()
@@ -479,7 +478,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         if(!response.ok){throw new Error("failed to fetch patient info")}
                         return response.json()
                     })
-                    .then(response=>{ alert(response)})
+                    .then(response=>{ console.log(response)})
                 })
                     
             })
@@ -491,10 +490,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
             fetch(`/visits/${patientId}`)
             .then(response=>{
+                
                 if(!response.ok){throw new Error("failed to fetch patient's visits")}
                 return response.json()
             })
-            .then(visits=>{
+            .then(data=>{
+                
                 dashDataPanel.textContent = ''
                 heading = new SuperElement('h4',['dash-data-heading'],'')
                 heading = heading.element
@@ -518,7 +519,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
                 tableBody = new SuperElement('tbody',['table-body'],'')
                 tableBody =tableBody.element
-                for(const visit of visits){
+                for(const visit of data.visits){
                 
                     tableRow = new SuperElement('tr',['details','patient-visit'],'')
                     tableRow = tableRow.element
@@ -532,13 +533,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     tableData2.element.textContent = visit.visit_date
                     tableData3.element.textContent = visit.doctor.doctorName
 
-                    deleteButton = new SuperElement('button',['dash-option','delete-button','dialog-action','delete-visit'])
-                    deleteButton = deleteButton.element
-                    deleteButton.textContent = 'Delete'
-                    deleteButton.setAttribute('data-id',visit.visitId)
-                    deleteButton.setAttribute('data-date',visit.visit_date)
+                    if(visit.doctor.user.id == data.currentUser.id){
 
-                    tableData4.append(deleteButton)
+                        deleteButton = new SuperElement('button',['dash-option','delete-button','dialog-action','delete-visit'])
+                        deleteButton = deleteButton.element
+                        deleteButton.textContent = 'Delete'
+                        deleteButton.setAttribute('data-id',visit.visitId)
+                        deleteButton.setAttribute('data-date',visit.visit_date)
+
+                        tableData4.append(deleteButton)
+                    }
 
                     tableRow.append(tableData1.element,tableData2.element,tableData3.element,tableData4)
                     tableBody.append(tableRow)
@@ -614,7 +618,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         
         //EventListener for delete User and delete Visit buttons
         if(e.target.matches('#delete-user')||e.target.matches('.delete-visit')){
-            alert('deleting')
+        
             e.preventDefault()
             patientName = document.querySelector('.patient-name').textContent
             dialogBox = new SuperElement('div',['message-div'],'')
@@ -655,7 +659,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                     .then(response=>{
                         if(!response.ok){throw new Error("failed to fetch patient's visits")}
 
-                        visitDiv = document.querySelector('[data-visit-id="1"]')
+                        visitDiv = document.querySelector(`[data-visit-id="${visitId}"]`)
                         visitDiv.remove()
                         dialogBox.remove()
                         return
