@@ -82,12 +82,12 @@
         <div class="dash-data-panel">
             <div class="dash-data-grid">
             {% for patient in patients %}                 
-                <a class="patient-card" href="{% url 'view_file' patient_id=patient.id %}">
+                <a class="patient-card" href="{% url 'view_file' patient_id=patient.user.id %}">
                     <div >      
                         <div class="patient-card-image">
 
                         </div>   
-                        <h4 style="text-align: center;">{{patient.first_name}} {{patient.last_name}}</h4>
+                        <h4 style="text-align: center;">{{patient.user.first_name}} {{patient.user.last_name}}</h4>
                     </div>                  
                 </a>
             {% endfor %}

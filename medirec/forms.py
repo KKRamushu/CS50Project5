@@ -62,6 +62,10 @@ class PatientForm(forms.ModelForm):
             'email' : forms.EmailInput(attrs={'class':'detail-value-input','placeholder':'Email Address'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.doctor = kwargs.pop('doctor', None)
+        super().__init__(*args, **kwargs)
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.username = self.cleaned_data["email"]
@@ -84,7 +88,9 @@ class PatientForm(forms.ModelForm):
             )
 
             Patient_file.objects.create(
-                patient = patient
+                patient = patient,
+                doctor = self.doctor
+
             )
             return user
 

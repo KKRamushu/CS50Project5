@@ -103,4 +103,5 @@ class Patient_Vitals(models.Model):
 
 #Medical record file
 class Patient_file(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='file')
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True, related_name='creating_doctor')

@@ -1,53 +1,61 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.core.cache import cache
-from .forms import SignUpForm, UsernameForm, LoginForm, PatientForm, VisitForm, VitalsForm
-from .models import User, Doctor, Patient, Patient_file, Patient_Visit, Patient_Vitals
-from django.contrib import messages
-from .utils import create_OTP, verify_OTP
-from django.contrib.auth import get_user_model, authenticate, login, logout
+from .forms import SignUpForm, UsernameForm, LoginForm, VisitForm, VitalsForm
+from .models import Doctor, Patient, Patient_file, Patient_Visit
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from .decorators import doctor_required
 from django.db.models import Q
 import json
 from django.http import JsonResponse, HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
-from .services import user_auth, user_reg
+from .services import user_auth, user_management, visit_management, patient_management
+
 
 def index(request):
-    allPatients = User.objects.all()
-    if request.user.is_authenticated:
-        return render(request, "medirec/dashboard.html", {'patients':allPatients})
+
+    if request.user.is_authenticated and request.user.user_type == "doctor":
+
+        all_patients = patient_management.get_all_patients()
+        return render(request, "medirec/dashboard.html", {'patients':all_patients})
+    
     return render(request, "medirec/index.html")
 
 #View current user's profile
 @login_required
+@doctor_required
 
 def my_profile(request):
 
-    doctor_profile = get_object_or_404(Doctor,user=request.user)
-    return JsonResponse([doctor_profile.serialize()], safe=False)
+    profile = user_management.get_user_profile(request)
+    return JsonResponse([profile.serialize()], safe=False)
 
 #view all patients
 @login_required
+@doctor_required
 
 def all_patients(request):
 
-    allPatients = Patient.objects.all()
-    return JsonResponse([patient.serialize() for patient in allPatients], safe=False)
+    all_patients = patient_management.get_all_patients()
+    return JsonResponse([patient.serialize() for patient in all_patients], safe=False)
 
 #view current doctor's patients
+@login_required
+@doctor_required
+
 def my_patients(request):
 
-    doctor = get_object_or_404(Doctor,user=request.user)
-    myPatients = Patient.objects.filter(visits__doctor=doctor).distinct()
+    myPatients = patient_management.get_my_patients(request)
     return JsonResponse([patient.serialize() for patient in myPatients], safe=False)
 
 @login_required
 
 def sign_out(request):
+
     logout(request)
     return redirect('index')
 
 def username_form(request):
+
     #open login form    
     form = UsernameForm()
     return render(request, "medirec/login.html",{'form':form, 'username':''})
@@ -57,72 +65,79 @@ def password_form(request):
     if request.method == 'POST':
         form = UsernameForm(request.POST)
         login_form = LoginForm()
+
         if form.is_valid():
             user = user_auth.user_identifyer(form)
         return render(request, "medirec/login.html",{'login_form':login_form, 'user':user, 'username':user.username})      
 
-    else:
-        return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
+    return render(request, "medirec/login.html",{'form':UsernameForm(), 'username':''})
 
 def login_view(request):
 
     return user_auth.authenticate_user(request)
-   
+
+#call up registration form for doctor
+
 def registration_form(request):
+
     #open registration form
     form = SignUpForm()
     return render(request,"medirec/register.html", {'form':form})
+
+#create doctor
 
 def register(request):
     #get data from form and save it to database
     if request.method == 'POST':
 
         form = SignUpForm(request.POST)
-        return user_reg.register_patient(form)
+        return user_management.register_patient(form)
         
     return redirect('registration_form')
 
 #present form to register a patient
 @login_required
+@doctor_required
 
 def add_patient(request):
-    
-    form = PatientForm()
+
+    form = user_management.patient_form(request)
     return render(request, "medirec/dashboard.html",{'form':form})
 
 #Register patient
 @login_required
+@doctor_required
 
 def register_patient(request):
     #get patient details from form and create a user, patient, and patient file
     if request.method == 'POST':
 
-        form = PatientForm(request.POST)
-        return user_reg.register_patient(request, form)
+        return user_management.register_patient(request)
     
     return redirect('add_patient')
+
 #View patient information
 @login_required
 
 def view_patient_file(request, patient_id):
-
-    patient_file = get_object_or_404(Patient_file,patient__user__id = patient_id)
-    patient = get_object_or_404(Patient,user__id=patient_id)
-    return render(request, "medirec/dashboard.html",{"patient":patient, "patient_file":patient_file, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
+    
+    patient = patient_management.get_patient(patient_id)
+    return render(request, "medirec/dashboard.html",{"patient":patient, 'vitals_form':VitalsForm, 'visit_form': VisitForm })
 
 #Remove Patient from system
 @login_required
+@doctor_required
 
 def remove_patient(request, patient_id):
-    patient = get_object_or_404(Patient,patient_id=patient_id)
-    patient.user.delete()
-    return redirect('index')
 
-#view patient information
+   return user_management.delete_patient(request,patient_id) 
+
+#view patient information through API
 @login_required
 
 def patient_info(request, patient_id):
-    patient = get_object_or_404(Patient,patient_id=patient_id)
+
+    patient = patient_management.get_patient_info(patient_id)
     return JsonResponse(patient.serialize())
 
 # open Patient Visit List
@@ -130,8 +145,7 @@ def patient_info(request, patient_id):
 
 def visits(request, patient_id):
 
-    patient = get_object_or_404(Patient,patient_id=patient_id)
-    visits = patient.visits.all()
+    visits = visit_management.get_patient_visits(patient_id)
     return JsonResponse({'visits':[visit.serialize() for visit in visits], 'currentUser': request.user.serialize()}, safe=False)
 
 # Open visit form
@@ -139,57 +153,31 @@ def visits(request, patient_id):
 
 def visit(request, patient_id):
 
-    patient = get_object_or_404(Patient,patient_id=patient_id)   
+    patient = patient_management.get_patient_info(patient_id)   
     return render(request, "medirec/dashboard.html",{'patient':patient,'new_visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
 
 # Save patient visit
 @login_required
 
 def save_visit(request, patient_id):
-
-    patient = get_object_or_404(Patient,patient_id=patient_id) 
-
-    #get data from forms and create visit and vitals models
-    if request.method == "POST":
-        visit_form = VisitForm(request.POST)
-        vitals_form = VitalsForm(request.POST)
-
-        if visit_form.is_valid() and vitals_form.is_valid():
-            print("forms valid", request.user)
-            visit = visit_form.save(commit=False)
-            visit.patient = patient
-            visit.doctor = get_object_or_404(Doctor,user=request.user)
-            visit.save()
-
-            vitals = vitals_form.save(commit=False)
-            vitals.visit = visit
-            vitals.save()
-            print("visit saved")
-            messages.success(request,"Patient visit recorded successfully!!")
-            return redirect("view_file", patient.user.id)
-        else:
-            return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
-    else:
-        return render(request, "medirec/dashboard.html",{'patient':patient,'visit':True, 'vitals_form':VitalsForm(), 'visit_form': VisitForm() })
+    
+    return visit_management.create_visit(request,patient_id)
 
 #remove visit from list
 @login_required
+@doctor_required
 
 def remove_visit(request, visit_id):
 
-    visit = get_object_or_404(Patient_Visit,id=visit_id)
-    visit.delete()
-    return HttpResponse(status=204)
+    return visit_management.delete_visit(request, visit_id)
 
 #Open and view visit details
 @login_required
 
 def view_visit(request, visit_id):
 
-    visit = get_object_or_404(Patient_Visit,id=visit_id)
-    vitals = visit.vitals
-    user_is_visit_doctor = (request.user == visit.doctor.user)
-    print(vitals.serialize())
+    vitals = visit_management.visit_details(visit_id)
+    user_is_visit_doctor = (request.user == vitals.visit.doctor.user)
     return JsonResponse({"vitals":vitals.serialize(),"user_is_visit_doctor": user_is_visit_doctor})
 
 #change value of a specific visit detail and return new value
@@ -198,22 +186,7 @@ def view_visit(request, visit_id):
 
 def edit_visit_detail(request, visitId):
 
-    visit = Patient_Visit.objects.get(id=visitId)
-    data = json.loads(request.body)
-    field = data['field']
-    value = data['value']
-
-    vitals_fields = {'bp','pulse','temp','height','weight'}
-    if field in vitals_fields:
-        setattr(visit.vitals,field,value)
-        visit.vitals.save()
-        new_value = getattr(visit.vitals, field)
-        return JsonResponse(new_value, safe=False)
-    else:
-        setattr(visit,field,value)
-        visit.save()
-        new_value = getattr(visit, field)
-        return JsonResponse(new_value, safe=False)
+    return visit_management.edit_visit(request,visitId)
 
 #make changes to patient personal infomation details
 @csrf_exempt
@@ -221,20 +194,4 @@ def edit_visit_detail(request, visitId):
 
 def edit_patient_info(request,patientId):
 
-    data = json.loads(request.body)
-    patient = get_object_or_404(Patient,user__id=patientId)
-    user = patient.user
-
-    user_fields = {'first_name','last_name','email'}
-    patient_fields = {'patient_id','date_of_birth','contact','address','gender','blood_type','allergies'}
-
-    for field in user_fields:
-        setattr(user,field,data[field])
-
-    for field in patient_fields:
-        setattr(patient,field,data[field])
-
-    user.save()
-    patient.save()
-
-    return JsonResponse({'message': 'Patient ifno updated successfully!'})
+    return  user_management.edit_patient_details(request, patientId)
